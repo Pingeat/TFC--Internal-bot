@@ -1,7 +1,6 @@
 # handlers/webhook_handler.py
-
+from handlers.mesage_handler import handle_incoming_message
 from flask import Blueprint, request, jsonify
-from handlers.message_handlers import handle_incoming_message
 
 webhook_bp = Blueprint('webhook', __name__)
 
