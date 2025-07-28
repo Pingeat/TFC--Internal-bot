@@ -1,0 +1,745 @@
+Customer Number,Timestamp,Step,Info
+system,2025-07-28 10:19:41,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 10:19:46,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 10:19:46,app_started,Flask server started
+system,2025-07-28 10:22:16,webhook_verification,GET request
+system,2025-07-28 10:22:16,webhook_verification_failed,Invalid token
+system,2025-07-28 10:25:35,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 10:25:35,app_started,Flask server started
+system,2025-07-28 10:25:36,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 10:25:36,app_started,Flask server started
+system,2025-07-28 10:26:48,webhook_received,POST request
+system,2025-07-28 10:26:48,message_received,New message received
+918074301029,2025-07-28 10:26:48,message_sent,Text: Thanks for your order! Please use the menu to plac...
+system,2025-07-28 10:26:52,webhook_received,POST request
+system,2025-07-28 10:26:52,message_received,New message received
+system,2025-07-28 10:26:52,webhook_received,POST request
+system,2025-07-28 10:26:52,message_received,New message received
+system,2025-07-28 10:26:52,webhook_received,POST request
+system,2025-07-28 10:26:52,message_received,New message received
+system,2025-07-28 10:28:21,webhook_received,POST request
+system,2025-07-28 10:28:21,message_received,New message received
+918074301029,2025-07-28 10:28:21,message_received,status
+918074301029,2025-07-28 10:28:21,status_check_requested,User checked order status
+918074301029,2025-07-28 10:28:21,message_sent,Text: 🔍 Please enter your order ID to check status (e.g....
+918074301029,2025-07-28 10:28:23,state_updated,Step: enter_order_id
+system,2025-07-28 10:28:24,webhook_received,POST request
+system,2025-07-28 10:28:24,message_received,New message received
+system,2025-07-28 10:28:24,webhook_received,POST request
+system,2025-07-28 10:28:24,message_received,New message received
+system,2025-07-28 10:28:25,webhook_received,POST request
+system,2025-07-28 10:28:25,message_received,New message received
+system,2025-07-28 10:31:53,webhook_received,POST request
+system,2025-07-28 10:31:53,message_received,New message received
+918074301029,2025-07-28 10:31:53,message_received,hi
+918074301029,2025-07-28 10:31:53,greeting_received,User greeted the bot
+918074301029,2025-07-28 10:31:53,state_updated,Step: select_branch
+918074301029,2025-07-28 10:31:53,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 10:31:56,webhook_received,POST request
+system,2025-07-28 10:31:56,message_received,New message received
+system,2025-07-28 10:31:56,webhook_received,POST request
+system,2025-07-28 10:31:56,message_received,New message received
+system,2025-07-28 10:31:56,webhook_received,POST request
+system,2025-07-28 10:31:56,message_received,New message received
+system,2025-07-28 10:32:23,webhook_received,POST request
+system,2025-07-28 10:32:23,message_received,New message received
+918074301029,2025-07-28 10:32:23,branch_selected,Branch: kondapur
+918074301029,2025-07-28 10:32:23,state_updated,Step: browse_menu
+918074301029,2025-07-28 10:32:23,interactive_list_sent,Header: 🍽️ Menu Categories
+system,2025-07-28 10:32:25,webhook_received,POST request
+system,2025-07-28 10:32:25,message_received,New message received
+system,2025-07-28 10:32:25,webhook_received,POST request
+system,2025-07-28 10:32:25,message_received,New message received
+system,2025-07-28 10:32:25,webhook_received,POST request
+system,2025-07-28 10:32:25,message_received,New message received
+system,2025-07-28 10:32:49,webhook_received,POST request
+system,2025-07-28 10:32:49,message_received,New message received
+918074301029,2025-07-28 10:32:49,category_selected,Category: category_custard
+918074301029,2025-07-28 10:32:49,interactive_list_sent,Header: 🛒 Custard Menu
+system,2025-07-28 10:40:20,webhook_verification,GET request
+system,2025-07-28 10:40:20,webhook_verification_failed,Invalid token
+system,2025-07-28 11:04:39,app_started,Flask server started
+system,2025-07-28 11:04:39,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 11:05:20,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 11:05:20,app_started,Flask server started
+system,2025-07-28 11:08:10,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 11:08:10,app_started,Flask server started
+system,2025-07-28 11:08:11,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 11:08:11,app_started,Flask server started
+system,2025-07-28 11:08:22,webhook_received,POST request
+system,2025-07-28 11:08:22,message_received,New message received
+918074301029,2025-07-28 11:08:22,message_received,hi
+918074301029,2025-07-28 11:08:22,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 11:08:22,state_updated,Step: select_branch
+918074301029,2025-07-28 11:08:22,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 11:08:25,webhook_received,POST request
+system,2025-07-28 11:08:25,message_received,New message received
+system,2025-07-28 11:08:25,webhook_received,POST request
+system,2025-07-28 11:08:25,message_received,New message received
+system,2025-07-28 11:08:25,webhook_received,POST request
+system,2025-07-28 11:08:25,message_received,New message received
+system,2025-07-28 11:08:30,webhook_received,POST request
+system,2025-07-28 11:08:30,message_received,New message received
+918074301029,2025-07-28 11:08:30,branch_selected,Branch: kondapur
+918074301029,2025-07-28 11:08:30,interactive_list_sent,Header: 🍽️ Menu Categories
+918074301029,2025-07-28 11:08:31,state_updated,Step: browse_menu
+system,2025-07-28 11:08:32,webhook_received,POST request
+system,2025-07-28 11:08:33,message_received,New message received
+system,2025-07-28 11:08:33,webhook_received,POST request
+system,2025-07-28 11:08:33,message_received,New message received
+system,2025-07-28 11:08:33,webhook_received,POST request
+system,2025-07-28 11:08:33,message_received,New message received
+system,2025-07-28 11:08:37,webhook_received,POST request
+system,2025-07-28 11:08:37,message_received,New message received
+918074301029,2025-07-28 11:08:37,category_selected,Category: category_fruits
+918074301029,2025-07-28 11:08:37,interactive_list_sent,Header: 🛒 Fruits Menu
+system,2025-07-28 11:08:40,webhook_received,POST request
+system,2025-07-28 11:08:40,message_received,New message received
+system,2025-07-28 11:08:40,webhook_received,POST request
+system,2025-07-28 11:08:40,message_received,New message received
+system,2025-07-28 11:08:40,webhook_received,POST request
+system,2025-07-28 11:08:40,message_received,New message received
+system,2025-07-28 11:08:49,webhook_received,POST request
+system,2025-07-28 11:08:49,message_received,New message received
+918074301029,2025-07-28 11:08:49,product_selected,Product ID: product_2
+918074301029,2025-07-28 11:08:49,message_sent,"Text: ❌ Sorry, this product is no longer available...."
+918074301029,2025-07-28 11:08:50,interactive_list_sent,Header: 🍽️ Menu Categories
+system,2025-07-28 11:08:51,webhook_received,POST request
+system,2025-07-28 11:08:51,message_received,New message received
+system,2025-07-28 11:08:52,webhook_received,POST request
+system,2025-07-28 11:08:52,webhook_received,POST request
+system,2025-07-28 11:08:52,message_received,New message received
+system,2025-07-28 11:08:52,message_received,New message received
+system,2025-07-28 11:08:53,webhook_received,POST request
+system,2025-07-28 11:08:53,message_received,New message received
+system,2025-07-28 11:08:53,webhook_received,POST request
+system,2025-07-28 11:08:53,webhook_received,POST request
+system,2025-07-28 11:08:53,message_received,New message received
+system,2025-07-28 11:08:53,message_received,New message received
+system,2025-07-28 11:09:00,webhook_received,POST request
+system,2025-07-28 11:09:00,message_received,New message received
+918074301029,2025-07-28 11:09:00,category_selected,Category: category_other_supplies
+918074301029,2025-07-28 11:09:00,interactive_list_sent,Header: 🛒 Other Supplies Menu
+system,2025-07-28 11:09:13,webhook_received,POST request
+system,2025-07-28 11:09:13,message_received,New message received
+918074301029,2025-07-28 11:09:13,catalog_order_received,Received 1 items from catalog
+918074301029,2025-07-28 11:09:13,state_updated,Step: browse_menu
+918074301029,2025-07-28 11:09:13,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 11:09:13,state_updated,Step: select_branch
+918074301029,2025-07-28 11:09:13,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 11:09:15,webhook_received,POST request
+system,2025-07-28 11:09:15,message_received,New message received
+system,2025-07-28 11:09:15,webhook_received,POST request
+system,2025-07-28 11:09:15,message_received,New message received
+system,2025-07-28 11:09:16,webhook_received,POST request
+system,2025-07-28 11:09:16,message_received,New message received
+system,2025-07-28 11:09:21,webhook_received,POST request
+system,2025-07-28 11:09:21,message_received,New message received
+918074301029,2025-07-28 11:09:21,branch_selected,Branch: kondapur
+918074301029,2025-07-28 11:09:21,interactive_buttons_sent,"Body: 🛒 *Your Cart*
+
+
+*Total:* Rs. 0..."
+918074301029,2025-07-28 11:09:22,state_updated,Step: cart_options
+system,2025-07-28 11:09:23,webhook_received,POST request
+system,2025-07-28 11:09:23,message_received,New message received
+system,2025-07-28 11:09:23,webhook_received,POST request
+system,2025-07-28 11:09:23,message_received,New message received
+system,2025-07-28 11:09:23,webhook_received,POST request
+system,2025-07-28 11:09:23,message_received,New message received
+system,2025-07-28 11:09:28,webhook_received,POST request
+system,2025-07-28 11:09:28,message_received,New message received
+918074301029,2025-07-28 11:09:28,cart_option_selected,Option: view cart
+918074301029,2025-07-28 11:09:28,message_sent,Text: 🛒 Your cart is empty....
+918074301029,2025-07-28 11:09:29,interactive_list_sent,Header: 🍽️ Menu Categories
+system,2025-07-28 11:09:30,webhook_received,POST request
+system,2025-07-28 11:09:30,message_received,New message received
+system,2025-07-28 11:09:30,webhook_received,POST request
+918074301029,2025-07-28 11:09:30,state_updated,Step: browse_menu
+system,2025-07-28 11:09:30,message_received,New message received
+system,2025-07-28 11:09:32,webhook_received,POST request
+system,2025-07-28 11:09:32,message_received,New message received
+system,2025-07-28 11:09:32,webhook_received,POST request
+system,2025-07-28 11:09:32,message_received,New message received
+system,2025-07-28 11:09:32,webhook_received,POST request
+system,2025-07-28 11:09:32,message_received,New message received
+system,2025-07-28 11:09:44,webhook_received,POST request
+system,2025-07-28 11:09:44,message_received,New message received
+918074301029,2025-07-28 11:09:44,catalog_order_received,Received 1 items from catalog
+918074301029,2025-07-28 11:09:44,state_updated,Step: browse_menu
+918074301029,2025-07-28 11:09:44,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 11:09:44,state_updated,Step: select_branch
+918074301029,2025-07-28 11:09:44,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 11:09:46,webhook_received,POST request
+system,2025-07-28 11:09:46,message_received,New message received
+system,2025-07-28 11:09:47,webhook_received,POST request
+system,2025-07-28 11:09:47,message_received,New message received
+system,2025-07-28 11:09:47,webhook_received,POST request
+system,2025-07-28 11:09:47,message_received,New message received
+system,2025-07-28 11:09:55,webhook_received,POST request
+system,2025-07-28 11:09:55,message_received,New message received
+918074301029,2025-07-28 11:09:55,branch_selected,Branch: madhapur
+918074301029,2025-07-28 11:09:55,interactive_buttons_sent,"Body: 🛒 *Your Cart*
+
+
+*Total:* Rs. 0..."
+918074301029,2025-07-28 11:09:56,state_updated,Step: cart_options
+system,2025-07-28 11:09:57,webhook_received,POST request
+system,2025-07-28 11:09:57,message_received,New message received
+system,2025-07-28 11:09:58,webhook_received,POST request
+system,2025-07-28 11:09:58,message_received,New message received
+system,2025-07-28 11:09:58,webhook_received,POST request
+system,2025-07-28 11:09:58,message_received,New message received
+system,2025-07-28 11:11:19,webhook_received,POST request
+system,2025-07-28 11:11:19,message_received,New message received
+918074301029,2025-07-28 11:11:19,cart_option_selected,Option: place order
+918074301029,2025-07-28 11:11:19,order_processing,Branch: madhapur
+918074301029,2025-07-28 11:11:19,order_error,Empty cart
+918074301029,2025-07-28 11:11:19,message_sent,Text: Your cart is empty. Please add items before placin...
+system,2025-07-28 11:11:22,webhook_received,POST request
+system,2025-07-28 11:11:22,message_received,New message received
+system,2025-07-28 11:11:22,webhook_received,POST request
+system,2025-07-28 11:11:22,message_received,New message received
+system,2025-07-28 11:11:22,webhook_received,POST request
+system,2025-07-28 11:11:22,message_received,New message received
+system,2025-07-28 11:11:28,webhook_received,POST request
+system,2025-07-28 11:11:28,message_received,New message received
+918074301029,2025-07-28 11:11:28,cart_option_selected,Option: continue shopping
+918074301029,2025-07-28 11:11:28,interactive_list_sent,Header: 🍽️ Menu Categories
+918074301029,2025-07-28 11:11:29,state_updated,Step: browse_menu
+system,2025-07-28 11:11:30,webhook_received,POST request
+system,2025-07-28 11:11:30,message_received,New message received
+system,2025-07-28 11:11:30,webhook_received,POST request
+system,2025-07-28 11:11:30,message_received,New message received
+system,2025-07-28 11:11:30,webhook_received,POST request
+system,2025-07-28 11:11:30,message_received,New message received
+system,2025-07-28 11:11:42,webhook_received,POST request
+system,2025-07-28 11:11:42,message_received,New message received
+918074301029,2025-07-28 11:11:42,category_selected,Category: category_packaging_supplies
+918074301029,2025-07-28 11:11:42,interactive_list_sent,Header: 🛒 Packaging Supplies Menu
+system,2025-07-28 11:12:35,webhook_received,POST request
+system,2025-07-28 11:12:35,message_received,New message received
+918074301029,2025-07-28 11:12:35,message_received,hi
+918074301029,2025-07-28 11:12:35,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 11:12:35,state_updated,Step: select_branch
+918074301029,2025-07-28 11:12:35,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 11:12:38,webhook_received,POST request
+system,2025-07-28 11:12:38,message_received,New message received
+system,2025-07-28 11:12:38,webhook_received,POST request
+system,2025-07-28 11:12:38,message_received,New message received
+system,2025-07-28 11:12:38,webhook_received,POST request
+system,2025-07-28 11:12:38,message_received,New message received
+system,2025-07-28 11:12:44,webhook_received,POST request
+system,2025-07-28 11:12:44,message_received,New message received
+918074301029,2025-07-28 11:12:44,branch_selected,Branch: madhapur
+918074301029,2025-07-28 11:12:44,interactive_list_sent,Header: 🍽️ Menu Categories
+918074301029,2025-07-28 11:12:46,state_updated,Step: browse_menu
+system,2025-07-28 11:12:47,webhook_received,POST request
+system,2025-07-28 11:12:47,message_received,New message received
+system,2025-07-28 11:12:47,webhook_received,POST request
+system,2025-07-28 11:12:47,message_received,New message received
+system,2025-07-28 11:12:47,webhook_received,POST request
+system,2025-07-28 11:12:47,message_received,New message received
+system,2025-07-28 11:12:52,webhook_received,POST request
+system,2025-07-28 11:12:52,message_received,New message received
+918074301029,2025-07-28 11:12:52,category_selected,Category: category_custard_products
+918074301029,2025-07-28 11:12:52,interactive_list_sent,Header: 🛒 Custard Products Menu
+system,2025-07-28 11:12:59,webhook_received,POST request
+system,2025-07-28 11:12:59,message_received,New message received
+918074301029,2025-07-28 11:12:59,message_received,hi
+918074301029,2025-07-28 11:12:59,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 11:12:59,state_updated,Step: select_branch
+918074301029,2025-07-28 11:12:59,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 11:13:01,webhook_received,POST request
+system,2025-07-28 11:13:01,message_received,New message received
+system,2025-07-28 11:13:01,webhook_received,POST request
+system,2025-07-28 11:13:01,message_received,New message received
+system,2025-07-28 11:13:07,webhook_received,POST request
+system,2025-07-28 11:13:07,message_received,New message received
+918074301029,2025-07-28 11:13:07,branch_selected,Branch: miyapur
+918074301029,2025-07-28 11:13:07,interactive_list_sent,Header: 🍽️ Menu Categories
+918074301029,2025-07-28 11:13:09,state_updated,Step: browse_menu
+system,2025-07-28 11:13:10,webhook_received,POST request
+system,2025-07-28 11:13:10,message_received,New message received
+system,2025-07-28 11:13:10,webhook_received,POST request
+system,2025-07-28 11:13:10,message_received,New message received
+system,2025-07-28 11:13:10,webhook_received,POST request
+system,2025-07-28 11:13:10,message_received,New message received
+system,2025-07-28 11:13:15,webhook_received,POST request
+system,2025-07-28 11:13:15,message_received,New message received
+918074301029,2025-07-28 11:13:15,category_selected,Category: category_fruits
+918074301029,2025-07-28 11:13:15,interactive_list_sent,Header: 🛒 Fruits Menu
+system,2025-07-28 11:13:17,webhook_received,POST request
+system,2025-07-28 11:13:17,message_received,New message received
+system,2025-07-28 11:13:17,webhook_received,POST request
+system,2025-07-28 11:13:17,message_received,New message received
+system,2025-07-28 11:13:34,webhook_received,POST request
+system,2025-07-28 11:13:34,message_received,New message received
+918074301029,2025-07-28 11:13:34,product_selected,Product ID: product_30
+918074301029,2025-07-28 11:13:34,message_sent,"Text: ❌ Sorry, this product is no longer available...."
+918074301029,2025-07-28 11:13:36,interactive_list_sent,Header: 🍽️ Menu Categories
+system,2025-07-28 11:13:37,webhook_received,POST request
+system,2025-07-28 11:13:37,message_received,New message received
+system,2025-07-28 11:13:37,webhook_received,POST request
+system,2025-07-28 11:13:37,message_received,New message received
+system,2025-07-28 11:13:38,webhook_received,POST request
+system,2025-07-28 11:13:38,message_received,New message received
+system,2025-07-28 11:13:38,webhook_received,POST request
+system,2025-07-28 11:13:38,message_received,New message received
+system,2025-07-28 11:13:39,webhook_received,POST request
+system,2025-07-28 11:13:39,message_received,New message received
+system,2025-07-28 13:28:06,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 13:28:06,app_started,Flask server started
+system,2025-07-28 13:28:15,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 13:28:16,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 13:28:16,app_started,Flask server started
+system,2025-07-28 13:28:36,webhook_received,POST request
+system,2025-07-28 13:28:36,message_received,New message received
+918074301029,2025-07-28 13:28:36,catalog_order_received,Received 2 items from catalog
+918074301029,2025-07-28 13:28:36,state_updated,Step: start
+918074301029,2025-07-28 13:28:36,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 13:28:36,state_updated,Step: select_branch
+918074301029,2025-07-28 13:28:36,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 13:28:39,webhook_received,POST request
+system,2025-07-28 13:28:39,message_received,New message received
+system,2025-07-28 13:28:39,webhook_received,POST request
+system,2025-07-28 13:28:39,message_received,New message received
+system,2025-07-28 13:28:39,webhook_received,POST request
+system,2025-07-28 13:28:39,message_received,New message received
+system,2025-07-28 13:28:44,webhook_received,POST request
+system,2025-07-28 13:28:44,message_received,New message received
+918074301029,2025-07-28 13:28:44,branch_selected,Branch: kondapur
+918074301029,2025-07-28 13:28:44,cart_error,Cart is empty after adding catalog items
+918074301029,2025-07-28 13:28:44,message_sent,Text: 🛒 Your cart is empty. Please add items....
+918074301029,2025-07-28 13:28:45,interactive_list_sent,Header: 🍽️ Menu Categories
+system,2025-07-28 13:28:46,webhook_received,POST request
+system,2025-07-28 13:28:47,message_received,New message received
+918074301029,2025-07-28 13:28:47,state_updated,Step: browse_menu
+system,2025-07-28 13:28:47,webhook_received,POST request
+system,2025-07-28 13:28:47,message_received,New message received
+system,2025-07-28 13:28:47,webhook_received,POST request
+system,2025-07-28 13:28:47,message_received,New message received
+system,2025-07-28 13:28:48,webhook_received,POST request
+system,2025-07-28 13:28:48,message_received,New message received
+system,2025-07-28 13:28:48,webhook_received,POST request
+system,2025-07-28 13:28:48,message_received,New message received
+system,2025-07-28 13:28:48,webhook_received,POST request
+system,2025-07-28 13:28:48,message_received,New message received
+system,2025-07-28 13:29:19,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 13:29:20,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 13:29:20,app_started,Flask server started
+system,2025-07-28 13:29:29,webhook_received,POST request
+system,2025-07-28 13:29:29,message_received,New message received
+918074301029,2025-07-28 13:29:29,category_selected,Category: category_fruits
+918074301029,2025-07-28 13:29:29,interactive_list_sent,Header: 🛒 Fruits Menu
+system,2025-07-28 13:29:32,webhook_received,POST request
+system,2025-07-28 13:29:32,message_received,New message received
+system,2025-07-28 13:29:32,webhook_received,POST request
+system,2025-07-28 13:29:32,message_received,New message received
+system,2025-07-28 13:29:37,webhook_received,POST request
+system,2025-07-28 13:29:37,message_received,New message received
+918074301029,2025-07-28 13:29:37,product_selected,Product ID: product_2
+918074301029,2025-07-28 13:29:37,message_sent,"Text: ❌ Sorry, this product is no longer available...."
+918074301029,2025-07-28 13:29:38,interactive_list_sent,Header: 🍽️ Menu Categories
+system,2025-07-28 13:29:39,webhook_received,POST request
+system,2025-07-28 13:29:39,message_received,New message received
+system,2025-07-28 13:29:40,webhook_received,POST request
+system,2025-07-28 13:29:40,message_received,New message received
+system,2025-07-28 13:29:41,webhook_received,POST request
+system,2025-07-28 13:29:41,webhook_received,POST request
+system,2025-07-28 13:29:41,message_received,New message received
+system,2025-07-28 13:29:41,message_received,New message received
+system,2025-07-28 13:29:41,webhook_received,POST request
+system,2025-07-28 13:29:41,message_received,New message received
+system,2025-07-28 13:29:48,webhook_received,POST request
+system,2025-07-28 13:29:48,message_received,New message received
+918074301029,2025-07-28 13:29:48,catalog_order_received,Received 2 items from catalog
+918074301029,2025-07-28 13:29:48,state_updated,Step: browse_menu
+918074301029,2025-07-28 13:29:48,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 13:29:48,state_updated,Step: select_branch
+918074301029,2025-07-28 13:29:48,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 13:29:51,webhook_received,POST request
+system,2025-07-28 13:29:51,message_received,New message received
+system,2025-07-28 13:29:51,webhook_received,POST request
+system,2025-07-28 13:29:51,message_received,New message received
+system,2025-07-28 13:29:51,webhook_received,POST request
+system,2025-07-28 13:29:51,message_received,New message received
+system,2025-07-28 13:30:45,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 13:30:45,app_started,Flask server started
+system,2025-07-28 13:30:46,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 13:30:46,app_started,Flask server started
+system,2025-07-28 13:31:05,webhook_received,POST request
+system,2025-07-28 13:31:05,message_received,New message received
+918074301029,2025-07-28 13:31:05,catalog_order_received,Received 2 items from catalog
+918074301029,2025-07-28 13:31:05,state_updated,Step: select_branch
+918074301029,2025-07-28 13:31:05,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 13:31:05,state_updated,Step: select_branch
+918074301029,2025-07-28 13:31:05,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 13:31:07,webhook_received,POST request
+system,2025-07-28 13:31:07,message_received,New message received
+system,2025-07-28 13:31:08,webhook_received,POST request
+system,2025-07-28 13:31:08,message_received,New message received
+system,2025-07-28 13:31:08,webhook_received,POST request
+system,2025-07-28 13:31:08,message_received,New message received
+system,2025-07-28 13:32:27,webhook_received,POST request
+system,2025-07-28 13:32:27,message_received,New message received
+918074301029,2025-07-28 13:32:27,branch_selected,Branch: kondapur
+918074301029,2025-07-28 13:32:27,cart_error,Cart is empty after adding catalog items
+918074301029,2025-07-28 13:32:27,message_sent,Text: 🛒 Your cart is empty. Please add items....
+918074301029,2025-07-28 13:32:28,interactive_list_sent,Header: 🍽️ Menu Categories
+system,2025-07-28 13:32:29,webhook_received,POST request
+system,2025-07-28 13:32:29,message_received,New message received
+system,2025-07-28 13:32:30,webhook_received,POST request
+system,2025-07-28 13:32:30,webhook_received,POST request
+918074301029,2025-07-28 13:32:30,state_updated,Step: browse_menu
+system,2025-07-28 13:32:30,message_received,New message received
+system,2025-07-28 13:32:30,message_received,New message received
+system,2025-07-28 13:32:31,webhook_received,POST request
+system,2025-07-28 13:32:31,message_received,New message received
+system,2025-07-28 13:32:31,webhook_received,POST request
+system,2025-07-28 13:32:31,message_received,New message received
+system,2025-07-28 13:32:31,webhook_received,POST request
+system,2025-07-28 13:32:31,message_received,New message received
+system,2025-07-28 13:36:21,app_started,Flask server started
+system,2025-07-28 13:36:21,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 13:36:22,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 13:36:22,app_started,Flask server started
+system,2025-07-28 13:36:36,webhook_received,POST request
+system,2025-07-28 13:36:36,message_received,New message received
+system,2025-07-28 13:36:36,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 13:36:37,webhook_received,POST request
+system,2025-07-28 13:36:37,message_received,New message received
+system,2025-07-28 13:36:37,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 13:36:38,webhook_received,POST request
+system,2025-07-28 13:36:38,message_received,New message received
+system,2025-07-28 13:36:38,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 13:36:40,webhook_received,POST request
+system,2025-07-28 13:36:40,message_received,New message received
+system,2025-07-28 13:36:40,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 13:36:50,webhook_received,POST request
+system,2025-07-28 13:36:50,message_received,New message received
+system,2025-07-28 13:36:50,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 13:36:51,webhook_received,POST request
+system,2025-07-28 13:36:51,message_received,New message received
+system,2025-07-28 13:36:51,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 13:36:52,webhook_received,POST request
+system,2025-07-28 13:36:52,message_received,New message received
+system,2025-07-28 13:36:52,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 13:36:54,webhook_received,POST request
+system,2025-07-28 13:36:54,message_received,New message received
+system,2025-07-28 13:36:54,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 13:37:08,webhook_received,POST request
+system,2025-07-28 13:37:08,message_received,New message received
+system,2025-07-28 13:37:08,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 13:37:17,webhook_received,POST request
+system,2025-07-28 13:37:17,message_received,New message received
+system,2025-07-28 13:37:17,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 13:43:18,webhook_received,POST request
+system,2025-07-28 13:43:18,message_received,New message received
+system,2025-07-28 13:43:18,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 13:44:11,webhook_received,POST request
+system,2025-07-28 13:44:11,message_received,New message received
+system,2025-07-28 13:44:11,error,Message handler error: cannot access local variable 'cart' where it is not associated with a value
+system,2025-07-28 15:06:58,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 15:06:58,app_started,Flask server started
+system,2025-07-28 15:09:12,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 15:09:12,app_started,Flask server started
+system,2025-07-28 15:14:12,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 15:14:12,app_started,Flask server started
+system,2025-07-28 15:14:13,app_started,Flask server started
+system,2025-07-28 15:14:13,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 15:14:40,webhook_received,POST request
+system,2025-07-28 15:14:40,message_received,New message received
+918074301029,2025-07-28 15:14:40,state_initialized,New user state created
+918074301029,2025-07-28 15:14:40,catalog_order_received,Received 1 items from catalog
+918074301029,2025-07-28 15:14:40,state_initialized,New user state created
+918074301029,2025-07-28 15:14:40,state_updated,"Step: start, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:14:40,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 15:14:40,state_retrieved,"Step: start, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:14:40,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:14:40,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 15:14:43,webhook_received,POST request
+system,2025-07-28 15:14:43,message_received,New message received
+system,2025-07-28 15:14:43,webhook_received,POST request
+system,2025-07-28 15:14:43,message_received,New message received
+system,2025-07-28 15:14:44,webhook_received,POST request
+system,2025-07-28 15:14:44,message_received,New message received
+system,2025-07-28 15:14:50,webhook_received,POST request
+system,2025-07-28 15:14:50,message_received,New message received
+918074301029,2025-07-28 15:14:50,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:14:50,branch_selected,Branch: kondapur
+918074301029,2025-07-28 15:14:50,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:14:50,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:14:50,cart_retrieved,Cart contents: empty
+918074301029,2025-07-28 15:14:50,cart_error,Cart is empty after adding catalog items
+918074301029,2025-07-28 15:14:50,message_sent,Text: 🛒 Your cart is empty. Please add items....
+918074301029,2025-07-28 15:14:52,interactive_list_sent,Header: 🍽️ Menu Categories
+system,2025-07-28 15:14:53,webhook_received,POST request
+system,2025-07-28 15:14:53,message_received,New message received
+system,2025-07-28 15:14:53,webhook_received,POST request
+system,2025-07-28 15:14:53,message_received,New message received
+918074301029,2025-07-28 15:14:53,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+system,2025-07-28 15:14:54,webhook_received,POST request
+system,2025-07-28 15:14:54,message_received,New message received
+system,2025-07-28 15:14:54,webhook_received,POST request
+system,2025-07-28 15:14:54,message_received,New message received
+system,2025-07-28 15:14:54,webhook_received,POST request
+system,2025-07-28 15:14:54,message_received,New message received
+system,2025-07-28 15:18:44,webhook_received,POST request
+system,2025-07-28 15:18:44,message_received,New message received
+918074301029,2025-07-28 15:18:44,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:18:44,catalog_order_received,Received 2 items from catalog
+918074301029,2025-07-28 15:18:44,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:18:44,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:18:44,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 15:18:44,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:18:44,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:18:44,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 15:18:46,webhook_received,POST request
+system,2025-07-28 15:18:46,message_received,New message received
+system,2025-07-28 15:18:47,webhook_received,POST request
+system,2025-07-28 15:18:47,message_received,New message received
+system,2025-07-28 15:18:53,webhook_received,POST request
+system,2025-07-28 15:18:53,message_received,New message received
+system,2025-07-28 15:19:05,webhook_received,POST request
+system,2025-07-28 15:19:05,message_received,New message received
+918074301029,2025-07-28 15:19:05,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:19:05,branch_selected,Branch: kondapur
+918074301029,2025-07-28 15:19:05,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:19:05,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:19:05,cart_retrieved,Cart contents: empty
+918074301029,2025-07-28 15:19:05,cart_error,Cart is empty after adding catalog items
+918074301029,2025-07-28 15:19:05,message_sent,Text: 🛒 Your cart is empty. Please add items....
+918074301029,2025-07-28 15:19:07,interactive_list_sent,Header: 🍽️ Menu Categories
+system,2025-07-28 15:19:08,webhook_received,POST request
+system,2025-07-28 15:19:08,message_received,New message received
+system,2025-07-28 15:19:08,webhook_received,POST request
+system,2025-07-28 15:19:08,message_received,New message received
+918074301029,2025-07-28 15:19:08,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+system,2025-07-28 15:19:08,webhook_received,POST request
+system,2025-07-28 15:19:08,message_received,New message received
+system,2025-07-28 15:19:09,webhook_received,POST request
+system,2025-07-28 15:19:09,message_received,New message received
+system,2025-07-28 15:19:09,webhook_received,POST request
+system,2025-07-28 15:19:09,message_received,New message received
+system,2025-07-28 15:19:09,webhook_received,POST request
+system,2025-07-28 15:19:09,message_received,New message received
+system,2025-07-28 15:39:32,webhook_received,POST request
+system,2025-07-28 15:39:32,message_received,New message received
+918074301029,2025-07-28 15:39:32,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:39:32,catalog_order_received,Received 1 items from catalog
+918074301029,2025-07-28 15:39:32,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:39:32,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:39:32,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 15:39:32,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:39:32,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:39:32,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 15:39:36,webhook_received,POST request
+system,2025-07-28 15:39:36,message_received,New message received
+system,2025-07-28 15:39:36,webhook_received,POST request
+system,2025-07-28 15:39:36,message_received,New message received
+system,2025-07-28 15:39:48,webhook_received,POST request
+system,2025-07-28 15:39:48,message_received,New message received
+system,2025-07-28 15:40:00,webhook_received,POST request
+system,2025-07-28 15:40:00,message_received,New message received
+918074301029,2025-07-28 15:40:00,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:40:00,branch_selected,Branch: kondapur
+918074301029,2025-07-28 15:40:00,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:40:00,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 15:40:00,cart_retrieved,Cart contents: empty
+918074301029,2025-07-28 15:40:00,cart_error,Cart is empty after adding catalog items
+918074301029,2025-07-28 15:40:00,message_sent,Text: 🛒 Your cart is empty. Please add items....
+918074301029,2025-07-28 15:40:01,interactive_list_sent,Header: 🍽️ Menu Categories
+system,2025-07-28 15:40:02,webhook_received,POST request
+system,2025-07-28 15:40:02,message_received,New message received
+system,2025-07-28 15:40:03,webhook_received,POST request
+system,2025-07-28 15:40:03,message_received,New message received
+918074301029,2025-07-28 15:40:03,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+system,2025-07-28 15:40:05,webhook_received,POST request
+system,2025-07-28 15:40:05,webhook_received,POST request
+system,2025-07-28 15:40:05,webhook_received,POST request
+system,2025-07-28 15:40:05,message_received,New message received
+system,2025-07-28 15:40:05,message_received,New message received
+system,2025-07-28 15:40:05,message_received,New message received
+system,2025-07-28 15:41:03,webhook_received,POST request
+system,2025-07-28 15:41:03,message_received,New message received
+918074301029,2025-07-28 15:41:03,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+system,2025-07-28 16:36:23,webhook_received,POST request
+system,2025-07-28 16:36:23,message_received,New message received
+918074301029,2025-07-28 16:36:23,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 16:36:23,catalog_order_received,Received 3 items from catalog
+918074301029,2025-07-28 16:36:23,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 16:36:23,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 16:36:23,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 16:36:23,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 16:36:23,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 16:36:23,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 16:36:26,webhook_received,POST request
+system,2025-07-28 16:36:26,message_received,New message received
+system,2025-07-28 16:36:26,webhook_received,POST request
+system,2025-07-28 16:36:26,message_received,New message received
+system,2025-07-28 16:36:26,webhook_received,POST request
+system,2025-07-28 16:36:26,message_received,New message received
+system,2025-07-28 16:38:54,app_started,Flask server started
+system,2025-07-28 16:38:54,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 16:39:12,webhook_received,POST request
+system,2025-07-28 16:39:12,message_received,New message received
+918074301029,2025-07-28 16:39:12,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 16:39:12,catalog_order_received,Received 2 items from catalog
+918074301029,2025-07-28 16:39:12,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 16:39:12,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 16:39:12,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 16:39:12,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 16:39:12,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 16:39:12,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 16:39:12,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 16:39:15,webhook_received,POST request
+system,2025-07-28 16:39:15,message_received,New message received
+system,2025-07-28 16:39:16,webhook_received,POST request
+system,2025-07-28 16:39:16,message_received,New message received
+system,2025-07-28 17:32:39,webhook_received,POST request
+system,2025-07-28 17:32:39,message_received,New message received
+918074301029,2025-07-28 17:32:39,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 17:32:39,branch_selected,Branch: kondapur
+918074301029,2025-07-28 17:32:39,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 17:32:39,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 17:32:39,cart_retrieved,Cart contents: empty
+918074301029,2025-07-28 17:32:39,cart_error,Cart is empty after adding catalog items
+918074301029,2025-07-28 17:32:39,message_sent,Text: 🛒 Your cart is empty. Please add items....
+918074301029,2025-07-28 17:32:41,interactive_list_sent,Header: 🍽️ Menu Categories
+system,2025-07-28 17:32:42,webhook_received,POST request
+system,2025-07-28 17:32:42,message_received,New message received
+system,2025-07-28 17:32:43,webhook_received,POST request
+system,2025-07-28 17:32:43,message_received,New message received
+system,2025-07-28 17:32:43,webhook_received,POST request
+system,2025-07-28 17:32:43,message_received,New message received
+918074301029,2025-07-28 17:32:43,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+system,2025-07-28 17:32:44,webhook_received,POST request
+system,2025-07-28 17:32:44,message_received,New message received
+system,2025-07-28 17:32:44,webhook_received,POST request
+system,2025-07-28 17:32:44,message_received,New message received
+system,2025-07-28 17:32:44,webhook_received,POST request
+system,2025-07-28 17:32:44,message_received,New message received
+system,2025-07-28 17:32:44,webhook_received,POST request
+system,2025-07-28 17:32:44,message_received,New message received
+system,2025-07-28 17:35:11,webhook_received,POST request
+system,2025-07-28 17:35:11,message_received,New message received
+918074301029,2025-07-28 17:35:11,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 17:35:11,catalog_order_received,Received 2 items from catalog
+918074301029,2025-07-28 17:35:11,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 17:35:11,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 17:35:11,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 17:35:11,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 17:35:11,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 17:35:11,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 17:35:11,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 17:35:13,webhook_received,POST request
+system,2025-07-28 17:35:13,message_received,New message received
+system,2025-07-28 17:35:14,webhook_received,POST request
+system,2025-07-28 17:35:14,message_received,New message received
+system,2025-07-28 17:35:14,webhook_received,POST request
+system,2025-07-28 17:35:14,message_received,New message received
+system,2025-07-28 18:32:15,app_started,Flask server started
+system,2025-07-28 18:32:15,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 18:32:24,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 18:32:24,app_started,Flask server started
+system,2025-07-28 18:32:24,app_started,Flask server started
+system,2025-07-28 18:32:24,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 18:32:49,webhook_received,POST request
+system,2025-07-28 18:32:49,message_received,New message received
+918074301029,2025-07-28 18:32:49,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:32:49,catalog_order_received,Received 2 items from catalog
+918074301029,2025-07-28 18:32:49,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:32:49,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:32:49,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 18:32:49,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:32:49,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:32:49,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 18:32:52,webhook_received,POST request
+system,2025-07-28 18:32:52,message_received,New message received
+system,2025-07-28 18:32:52,webhook_received,POST request
+system,2025-07-28 18:32:52,message_received,New message received
+system,2025-07-28 18:32:59,webhook_received,POST request
+system,2025-07-28 18:32:59,message_received,New message received
+918074301029,2025-07-28 18:32:59,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:32:59,branch_selected,Branch: kondapur
+918074301029,2025-07-28 18:32:59,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:32:59,catalog_processing,Processing 2 catalog items
+918074301029,2025-07-28 18:32:59,catalog_item,Processing item ID: 10.00 -> 10
+918074301029,2025-07-28 18:32:59,catalog_add,Adding Watermelon 1pc x1
+918074301029,2025-07-28 18:32:59,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:32:59,cart_update,Adding new item: Watermelon 1pc x1 @ Rs. 60.0
+918074301029,2025-07-28 18:32:59,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:32:59,state_updated,"Step: select_branch, Cart: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:32:59,cart_updated,"Items: 1, Total: 60.0"
+918074301029,2025-07-28 18:32:59,cart_final,"Cart after add: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:32:59,catalog_item,Processing item ID: 15.00 -> 15
+918074301029,2025-07-28 18:32:59,catalog_add,Adding Sandwich packing box (pack of 50) x1
+918074301029,2025-07-28 18:32:59,state_retrieved,"Step: select_branch, Cart: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:32:59,cart_update,Adding new item: Sandwich packing box (pack of 50) x1 @ Rs. 51.0
+918074301029,2025-07-28 18:32:59,state_retrieved,"Step: select_branch, Cart: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:32:59,state_updated,"Step: select_branch, Cart: Watermelon 1pc x1, Sandwich packing box (pack of 50) x1, Total: 111.0"
+918074301029,2025-07-28 18:32:59,cart_updated,"Items: 2, Total: 111.0"
+918074301029,2025-07-28 18:32:59,cart_final,"Cart after add: Watermelon 1pc x1, Sandwich packing box (pack of 50) x1, Total: 111.0"
+918074301029,2025-07-28 18:32:59,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:32:59,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:32:59,cart_retrieved,Cart contents: empty
+918074301029,2025-07-28 18:32:59,cart_error,No items added from catalog (tried 2 items)
+918074301029,2025-07-28 18:32:59,interactive_list_sent,Header: 🍽️ Menu Categories
+918074301029,2025-07-28 18:33:01,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+system,2025-07-28 18:33:02,webhook_received,POST request
+system,2025-07-28 18:33:02,message_received,New message received
+system,2025-07-28 18:33:02,webhook_received,POST request
+system,2025-07-28 18:33:02,message_received,New message received
+system,2025-07-28 18:35:34,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 18:35:34,app_started,Flask server started
+system,2025-07-28 18:35:35,app_started,Flask server started
+system,2025-07-28 18:35:35,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 18:35:43,webhook_received,POST request
+system,2025-07-28 18:35:43,message_received,New message received
+918074301029,2025-07-28 18:35:43,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:35:43,catalog_order_received,Received 2 items from catalog
+918074301029,2025-07-28 18:35:43,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:35:43,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:35:43,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 18:35:43,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:35:43,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:35:43,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 18:35:46,webhook_received,POST request
+system,2025-07-28 18:35:46,webhook_received,POST request
+system,2025-07-28 18:35:46,message_received,New message received
+system,2025-07-28 18:35:46,message_received,New message received
+system,2025-07-28 18:36:18,webhook_received,POST request
+system,2025-07-28 18:36:18,message_received,New message received
+918074301029,2025-07-28 18:36:18,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:36:18,branch_selected,Branch: manikonda
+918074301029,2025-07-28 18:36:18,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:36:18,catalog_processing,Processing 2 catalog items
+918074301029,2025-07-28 18:36:18,catalog_item,Processing item ID: 10.00 -> 10
+918074301029,2025-07-28 18:36:18,catalog_add,Adding Watermelon 1pc x1
+918074301029,2025-07-28 18:36:18,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:36:18,cart_update,Adding new item: Watermelon 1pc x1 @ Rs. 60.0
+918074301029,2025-07-28 18:36:18,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:36:18,state_updated,"Step: select_branch, Cart: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:36:18,cart_updated,"Items: 1, Total: 60.0"
+918074301029,2025-07-28 18:36:18,cart_final,"Cart after add: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:36:18,catalog_item,Processing item ID: 15.00 -> 15
+918074301029,2025-07-28 18:36:18,catalog_add,Adding Sandwich packing box (pack of 50) x1
+918074301029,2025-07-28 18:36:18,state_retrieved,"Step: select_branch, Cart: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:36:18,cart_update,Adding new item: Sandwich packing box (pack of 50) x1 @ Rs. 51.0
+918074301029,2025-07-28 18:36:18,state_retrieved,"Step: select_branch, Cart: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:36:18,state_updated,"Step: select_branch, Cart: Watermelon 1pc x1, Sandwich packing box (pack of 50) x1, Total: 111.0"
+918074301029,2025-07-28 18:36:18,cart_updated,"Items: 2, Total: 111.0"
+918074301029,2025-07-28 18:36:18,cart_final,"Cart after add: Watermelon 1pc x1, Sandwich packing box (pack of 50) x1, Total: 111.0"
+918074301029,2025-07-28 18:36:18,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:36:18,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:36:18,cart_retrieved,Cart contents: empty
+918074301029,2025-07-28 18:36:18,cart_error,No items added from catalog (tried 2 items)
+918074301029,2025-07-28 18:36:18,interactive_list_sent,Header: 🍽️ Menu Categories
+918074301029,2025-07-28 18:36:20,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+system,2025-07-28 18:36:21,webhook_received,POST request
+system,2025-07-28 18:36:21,message_received,New message received
+system,2025-07-28 18:36:22,webhook_received,POST request
+system,2025-07-28 18:36:22,message_received,New message received
+system,2025-07-28 18:36:22,webhook_received,POST request
+system,2025-07-28 18:36:22,message_received,New message received

@@ -1,0 +1,20 @@
+# config/credentials.py
+
+META_ACCESS_TOKEN = "EAAb8hyD3iOMBPN9SfulS7ZCUCji7ljfL131dsZAxpjRxSuKt8b0N0vOx9gbZC06LvfjZC6oLbFirHZCycrwOsiJ4bQZBMzomClgxFrdWItzHVA3gN0Du4wNORfRFWqXkPaun2TGZCyxaae8oNiRbRlLUad1j5U7ZB28d67Uz4Hljjd1HvnEs24zZC2YW415JlE7ze"
+META_PHONE_NUMBER_ID = "716601704873382"
+META_VERIFY_TOKEN = "TFC_123"
+
+GOOGLE_MAPS_API_KEY = "AIzaSyCuUz9N78WZAT1N38ffIDkbySI3_0zkZgE"
+
+RAZORPAY_KEY_ID = "rzp_live_jtGMQ5k5QGHxFg"
+RAZORPAY_KEY_SECRET = "FEMHAO4zeUFnAiKZPLe44NRN"
+
+# WHATSAPP_API_URL = f"https://graph.facebook.com/v18.0/{META_PHONE_NUMBER_ID}/messages" 
+WHATSAPP_API_URL = f"https://graph.facebook.com/v23.0/{META_PHONE_NUMBER_ID}/messages" 
+
+
+# Redis configuration
+REDIS_HOST = "localhost"
+REDIS_PORT = 6379
+REDIS_DB = 0
+REDIS_PASSWORD = None  # Set if you have password protection
