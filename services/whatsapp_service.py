@@ -144,6 +144,7 @@ def send_cart_summary(to):
     """Send cart summary to user with interactive buttons"""
     logger.info(f"Sending cart summary to {to}")
     cart = redis_state.get_cart(to)
+    print("[CART]:", cart)
     if not cart["items"]:
         message = "🛒 *YOUR CART IS EMPTY*\n\n"
         message += "Use the catalog to add items to your cart."
@@ -212,13 +213,21 @@ def send_cart_summary(to):
         logger.error(f"Failed to send cart summary: {str(e)}")
         return None
 
-def send_order_confirmation(to, order_id, branch):
-    """Send order confirmation message"""
+def send_order_confirmation(to, order_id, branch, items, total):
+    """Send order confirmation message with detailed order items"""
     logger.info(f"Sending order confirmation to {to} for order {order_id}")
     
     message = f"✅ *ORDER CONFIRMED*\n\n"
     message += f"Order ID: #{order_id}\n"
     message += f"Branch: {branch.title()}\n\n"
+    
+    # Add order items section
+    message += "ORDER ITEMS:\n"
+    for item in items:
+        item_total = item["quantity"] * item["price"]
+        message += f"• {item['name'].title()} x{item['quantity']} = ₹{item_total}\n"
+    
+    message += f"\n*TOTAL*: ₹{total}\n\n"
     message += "Your order has been placed successfully!\n"
     message += "You will receive a notification when your order is ready for delivery."
     
@@ -242,7 +251,7 @@ def send_payment_link(to, order_id, amount):
 def notify_supervisor(order_id, branch, items):
     """Notify supervisor (Krishna) about new order with Redis validation"""
     logger.info(f"Notifying supervisor about order {order_id} from {branch}")
-    
+    print("[ITEMS]:", items)
     # Double-check branch consistency
     if not branch or branch.lower() not in [b.lower() for b in BRANCHES]:
         logger.error(f"Invalid branch in order notification: {branch}")

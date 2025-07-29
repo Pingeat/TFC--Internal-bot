@@ -1,7 +1,7 @@
 # handlers/message_handler.py
 import json
 import traceback
-from config.settings import BRANCHES, PAYMENT_BRANCHES, PRODUCT_CATEGORIES, PRODUCT_PRICES
+from config.settings import BRANCHES, PAYMENT_BRANCHES, PRODUCT_CATALOG, PRODUCT_CATEGORIES, PRODUCT_PRICES
 from stateHandlers.redis_state import redis_state
 from services.whatsapp_service import (
     send_branch_selection_message,
@@ -201,42 +201,13 @@ def handle_button_response(sender, button_id, current_state):
         send_branch_selection_message(sender)
         redis_state.set_user_state(sender, {"step": "SELECT_BRANCH"})
 
-def handle_catalog_selection(sender, product_retailer_id, current_state):
-    """Handle product selection from catalog"""
-    logger.info(f"Handling catalog selection for {sender}: {product_retailer_id}")
-    
-    if not current_state or current_state.get("step") != "IN_CATALOG":
-        send_branch_selection_message(sender)
-        redis_state.set_user_state(sender, {"step": "SELECT_BRANCH"})
-        return
-    
-    # Clean up the product ID (replace underscores with spaces)
-    product_name = product_retailer_id.replace("_", " ")
-    
-    # Find the matching product (case-insensitive)
-    selected_product = None
-    for category, products in PRODUCT_CATEGORIES.items():
-        for product in products:
-            if product.lower() == product_name.lower():
-                selected_product = product
-                break
-        if selected_product:
-            break
-    
-    if selected_product:
-        # Add to cart (quantity 1 by default)
-        price = PRODUCT_PRICES.get(selected_product, 100)
-        redis_state.add_to_cart(sender, selected_product, 1, price)
-        send_text_message(sender, f"✅ Added {selected_product.title()} to your cart! (Price: ₹{price})")
-    else:
-        send_text_message(sender, "❌ Product not found. Please try again.")
-
 def handle_catalog_order(sender, items):
     """Handle catalog orders (when user selects from WhatsApp catalog)"""
     logger.info(f"Handling catalog order from {sender}")
     
     # Get user's current state
     current_state = redis_state.get_user_state(sender)
+    logger.debug(f"[CATALOG ITEMS]: {items}")
     
     # If branch is not selected, prompt for branch
     cart = redis_state.get_cart(sender)
@@ -247,13 +218,50 @@ def handle_catalog_order(sender, items):
     
     # Add catalog items to cart
     for item in items:
-        product_name = item.get("product_retailer_id", "").replace("_", " ")
+        product_id = item.get("product_retailer_id", "")
         quantity = int(item.get("quantity", 1))
-        price = PRODUCT_PRICES.get(product_name.lower(), 100)
         
-        # Add to cart
-        redis_state.add_to_cart(sender, product_name, quantity, price)
+        # Get product info from catalog mapping
+        product_info = PRODUCT_CATALOG.get(product_id)
+        
+        if product_info:
+            product_name = product_info["name"]
+            price = product_info["price"]
+            
+            # Add to cart
+            redis_state.add_to_cart(sender, product_name, quantity, price)
+            logger.info(f"Added {quantity}x {product_name} (ID: {product_id}) to cart for {sender}")
+        else:
+            # Fallback to using ID as name (shouldn't happen with proper catalog setup)
+            logger.warning(f"Unknown product ID: {product_id} for sender {sender}")
+            product_name = product_id.replace("_", " ")
+            price = PRODUCT_PRICES.get(product_name.lower(), 100)
+            redis_state.add_to_cart(sender, product_name, quantity, price)
     
     # Send cart summary
     send_cart_summary(sender)
     redis_state.set_user_state(sender, {"step": "IN_CATALOG"})
+
+def handle_catalog_selection(sender, product_retailer_id, current_state):
+    """Handle product selection from catalog"""
+    logger.info(f"Handling catalog selection for {sender}: {product_retailer_id}")
+    
+    if not current_state or current_state.get("step") != "IN_CATALOG":
+        send_branch_selection_message(sender)
+        redis_state.set_user_state(sender, {"step": "SELECT_BRANCH"})
+        return
+    
+    # Get product info from catalog mapping
+    product_info = PRODUCT_CATALOG.get(product_retailer_id)
+    
+    if product_info:
+        product_name = product_info["name"]
+        price = product_info["price"]
+        
+        # Add to cart (quantity 1 by default)
+        redis_state.add_to_cart(sender, product_name, 1, price)
+        send_text_message(sender, f"✅ Added {product_name} to your cart! (Price: ₹{price})")
+        logger.info(f"Added 1x {product_name} (ID: {product_retailer_id}) to cart for {sender}")
+    else:
+        logger.warning(f"Unknown product ID selected: {product_retailer_id} for sender {sender}")
+        send_text_message(sender, "❌ Product not found. Please try again.")

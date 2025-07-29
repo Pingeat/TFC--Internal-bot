@@ -194,52 +194,60 @@ def generate_order_id():
     return f"FCT{datetime.now().strftime('%Y%m%d')}{str(uuid.uuid4())[:4].upper()}"
 
 def place_order(user_id, branch):
-    """Place an order from user's cart with Redis-first approach"""
+    """Place an order from user's cart"""
     logger.info(f"Placing order for user {user_id} from branch {branch}")
+    
+    # Get cart
+    cart = redis_state.get_cart(user_id)
+    if not cart["items"]:
+        logger.warning(f"Cart is empty for user {user_id}")
+        return False, "Your cart is empty. Please add items before placing an order."
     
     # Generate order ID
     order_id = generate_order_id()
     
-    # Create order in Redis (primary storage)
-    order_data = redis_state.create_order(user_id, order_id)
-    if not order_data:
-        logger.error(f"Failed to create order in Redis for {user_id}")
-        return False, "Failed to create order. Please try again."
+    # Check if payment is required
+    payment_required = branch.lower() in [b.lower() for b in PAYMENT_BRANCHES]
     
-    # Now save to CSV as secondary storage (for backup/persistence)
+    # Prepare order data
+    order_data = {
+        "order_id": order_id,
+        "user_id": user_id,
+        "branch": branch,
+        "items": json.dumps(cart["items"]),
+        "total": cart["total"],
+        "status": ORDER_STATUS["PENDING"],
+        "order_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "payment_required": str(payment_required),
+        "payment_status": "PENDING" if payment_required else "PAID"
+    }
+    
+    # Save to CSV
     try:
-        # Format for CSV (needs string representation of items)
-        csv_order_data = {
-            "order_id": order_id,
-            "user_id": user_id,
-            "branch": branch,
-            "items": json.dumps(order_data["items"]),
-            "total": order_data["total"],
-            "status": order_data["status"],
-            "order_date": order_data["order_date"],
-            "payment_required": str(order_data["payment_required"]),
-            "payment_status": order_data["payment_status"]
-        }
-        append_to_csv(ORDERS_CSV, csv_order_data)
-        logger.info(f"Order {order_id} saved to CSV as backup")
+        append_to_csv(ORDERS_CSV, order_data)
+        logger.info(f"Order {order_id} saved to CSV")
     except Exception as e:
-        # Even if CSV fails, the order is still valid (in Redis)
-        logger.error(f"CSV backup failed for order {order_id}, but order is valid in Redis: {str(e)}")
+        logger.error(f"Failed to save order {order_id}: {str(e)}")
+        return False, "Failed to save order. Please try again."
     
     # Notify supervisor
-    notify_supervisor(order_id, branch, order_data["items"])
+    notify_supervisor(order_id, branch, cart["items"])
     
     # Clear cart
     redis_state.clear_cart(user_id)
     
     # Handle payment if required
-    if order_data["payment_required"]:
+    if payment_required:
+        # In a real implementation, this would generate a Razorpay payment link
+        # payment_link = f"https://api.razorpay.com/v1/payment_links/create?order_id={order_id}&amount={cart['total']}"
+        
         # Send payment link
-        send_payment_link(user_id, order_id, order_data["total"])
+        send_payment_link(user_id, order_id, cart["total"])
+        
         return True, f"Order #{order_id} placed successfully! Please complete payment to confirm your order."
     else:
-        # Send order confirmation
-        send_order_confirmation(user_id, order_id, branch)
+        # Send order confirmation WITH ORDER ITEMS
+        send_order_confirmation(user_id, order_id, branch, cart["items"], cart["total"])
         
         # Update order status to PAID
         update_order_status(order_id, ORDER_STATUS["PAID"])
