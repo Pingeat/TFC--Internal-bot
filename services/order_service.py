@@ -1,296 +1,594 @@
+# # services/order_service.py
+# import uuid
+# import json
+# from datetime import datetime
+# from utils.logger import get_logger
+# from utils.csv_utils import append_to_csv, read_csv
+# from config.settings import ORDERS_CSV, ORDER_STATUS, PAYMENT_BRANCHES
+# from stateHandlers.redis_state import redis_state
+# from services.whatsapp_service import (
+#     send_order_confirmation,
+#     notify_supervisor,
+#     send_payment_link
+# )
+# import csv
+
+# logger = get_logger("order_service")
+
+# def generate_order_id():
+#     """Generate a unique order ID"""
+#     return f"FCT{datetime.now().strftime('%Y%m%d')}{str(uuid.uuid4())[:4].upper()}"
+
+# def place_order(user_id, branch):
+#     """Place an order from user's cart"""
+#     logger.info(f"Placing order for user {user_id} from branch {branch}")
+    
+#     # Get cart
+#     cart = redis_state.get_cart(user_id)
+#     if not cart["items"]:
+#         logger.warning(f"Cart is empty for user {user_id}")
+#         return False, "Your cart is empty. Please add items before placing an order."
+    
+#     # Generate order ID
+#     order_id = generate_order_id()
+    
+#     # Check if payment is required
+#     payment_required = branch.lower() in [b.lower() for b in PAYMENT_BRANCHES]
+    
+#     # Prepare order data
+#     order_data = {
+#         "order_id": order_id,
+#         "user_id": user_id,
+#         "branch": branch,
+#         "items": json.dumps(cart["items"]),
+#         "total": cart["total"],
+#         "status": ORDER_STATUS["PENDING"],
+#         "order_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+#         "payment_required": str(payment_required),
+#         "payment_status": "PENDING" if payment_required else "PAID"
+#     }
+    
+#     # Save to CSV
+#     try:
+#         append_to_csv(ORDERS_CSV, order_data)
+#         logger.info(f"Order {order_id} saved to CSV")
+#     except Exception as e:
+#         logger.error(f"Failed to save order {order_id}: {str(e)}")
+#         return False, "Failed to save order. Please try again."
+    
+#     # Notify supervisor
+#     notify_supervisor(order_id, branch, cart["items"])
+    
+#     # Clear cart
+#     redis_state.clear_cart(user_id)
+    
+#     # Handle payment if required
+#     if payment_required:
+#         # In a real implementation, this would generate a Razorpay payment link
+#         # payment_link = f"https://api.razorpay.com/v1/payment_links/create?order_id={order_id}&amount={cart['total']}"
+        
+#         # Send payment link
+#         send_payment_link(user_id, order_id, cart["total"])
+        
+#         return True, f"Order #{order_id} placed successfully! Please complete payment to confirm your order."
+#     else:
+#         # Send order confirmation
+#         send_order_confirmation(user_id, order_id, branch)
+        
+#         # Update order status to PAID
+#         update_order_status(order_id, ORDER_STATUS["PAID"])
+        
+#         return True, f"Order #{order_id} placed successfully! Your order is being processed."
+
+# def confirm_order(whatsapp_number, payment_method, order_id, paid=False):
+#     """Confirm order after payment"""
+#     logger.info(f"Confirming order {order_id} for {whatsapp_number}")
+    
+#     # Find the order
+#     orders = read_csv(ORDERS_CSV)
+#     order = next((o for o in orders if o["order_id"] == order_id), None)
+    
+#     if not order:
+#         logger.error(f"Order {order_id} not found")
+#         return False
+    
+#     if paid:
+#         # Update order status
+#         update_order_status(order_id, ORDER_STATUS["PAID"])
+        
+#         # Send order confirmation
+#         send_order_confirmation(whatsapp_number, order_id, order["branch"])
+        
+#         logger.info(f"Order {order_id} confirmed and payment marked as paid")
+#         return True
+    
+#     logger.warning(f"Order {order_id} confirmation failed - payment not completed")
+#     return False
+
+# def update_order_status(order_id, status):
+#     """Update order status"""
+#     logger.info(f"Updating order {order_id} status to {status}")
+    
+#     # Read existing orders
+#     orders = read_csv(ORDERS_CSV)
+    
+#     # Update status for the matching order
+#     updated = False
+#     for order in orders:
+#         print("[ORDER]:", order)
+#         if order["order_id"] == order_id:
+#             order["status"] = status
+#             order["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#             updated = True
+#             break
+    
+#     if not updated:
+#         logger.error(f"Order {order_id} not found for status update")
+#         return False
+    
+#     # Rewrite CSV with updated order
+#     try:
+#         # Get headers from original CSV
+#         with open(ORDERS_CSV, 'r') as f:
+#             reader = csv.reader(f)
+#             try:
+#                 headers = next(reader)
+#             except StopIteration:
+#                 # If file is empty, use keys from first order
+#                 headers = list(orders[0].keys()) if orders else []
+        
+#         # Write updated data
+#         with open(ORDERS_CSV, 'w', newline='') as f:
+#             writer = csv.DictWriter(f, fieldnames=headers)
+#             writer.writeheader()
+#             for order in orders:
+#                 writer.writerow(order)
+        
+#         logger.info(f"Order {order_id} status updated to {status}")
+#         return True
+#     except Exception as e:
+#         logger.error(f"Failed to update order status: {str(e)}")
+#         return False
+
+# def send_production_lists():
+#     """Wrapper for sending production lists"""
+#     from services.whatsapp_service import send_production_list
+#     send_production_list()
+
+# def send_daily_delivery_list():
+#     """Wrapper for sending daily delivery list"""
+#     from services.whatsapp_service import send_delivery_list
+#     send_delivery_list()
+
+# def send_daily_reminder_to_branches():
+#     """Wrapper for sending daily reminder"""
+#     from services.whatsapp_service import send_daily_reminder
+#     send_daily_reminder()
+
+
+
+
+
+
+
 # services/order_service.py
-import csv
 import uuid
-import random
-import string
-from datetime import datetime, timedelta
-from config.settings import ORDERS_CSV, BRANCHES, PAYMENT_BRANCHES, CUT_OFF_HOUR
-from stateHandlers.redis_state import (
-    get_user_state, set_user_state, get_user_cart, clear_user_cart,
-    add_pending_order, add_active_order, get_order_status, update_order_status
-)
+import json
+from datetime import datetime
+from utils.logger import get_logger
+from utils.csv_utils import append_to_csv, read_csv
+from config.settings import ORDERS_CSV, ORDER_STATUS, PAYMENT_BRANCHES, PRODUCT_CATEGORIES, STAFF_CONTACTS
+from stateHandlers.redis_state import redis_state
 from services.whatsapp_service import (
-    send_order_confirmation, send_payment_link, send_status_update
+    send_order_confirmation,
+    notify_supervisor,
+    send_payment_link,
+    send_text_message
 )
-from utils.logger import log_user_activity
-from utils.csv_utils import log_order_to_csv
+import csv
+
+logger = get_logger("order_service")
 
 def generate_order_id():
     """Generate a unique order ID"""
-    prefix = "FCT"
-    timestamp = datetime.now().strftime("%m%d")
-    random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
-    return f"{prefix}{timestamp}{random_part}"
+    return f"FCT{datetime.now().strftime('%Y%m%d')}{str(uuid.uuid4())[:4].upper()}"
 
-def process_order(user_id, branch):
-    """Process the user's order"""
-    log_user_activity(user_id, "order_processing", f"Branch: {branch}")
+def place_order(user_id, branch):
+    """Place an order from user's cart with Redis-first approach"""
+    logger.info(f"Placing order for user {user_id} from branch {branch}")
     
-    state = get_user_state(user_id)
-    cart = get_user_cart(user_id)
-    
-    if not cart:
-        log_user_activity(user_id, "order_error", "Empty cart")
-        return False, "Your cart is empty. Please add items before placing an order."
-    
+    # Generate order ID
     order_id = generate_order_id()
-    total = sum(item["quantity"] * item["price"] for item in cart)
     
-    # Determine if payment is required
-    payment_required = branch.lower() in [b.lower() for b in PAYMENT_BRANCHES]
+    # Create order in Redis (primary storage)
+    order_data = redis_state.create_order(user_id, order_id)
+    if not order_data:
+        logger.error(f"Failed to create order in Redis for {user_id}")
+        return False, "Failed to create order. Please try again."
     
-    # Create order data
-    order_data = {
-        "order_id": order_id,
-        "customer_number": user_id,
-        "order_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "branch": branch,
-        "items": cart,
-        "total": total,
-        "payment_required": payment_required,
-        "status": "pending",
-        "payment_status": "pending" if payment_required else "completed"
+    # Now save to CSV as secondary storage (for backup/persistence)
+    try:
+        # Format for CSV (needs string representation of items)
+        csv_order_data = {
+            "order_id": order_id,
+            "user_id": user_id,
+            "branch": branch,
+            "items": json.dumps(order_data["items"]),
+            "total": order_data["total"],
+            "status": order_data["status"],
+            "order_date": order_data["order_date"],
+            "payment_required": str(order_data["payment_required"]),
+            "payment_status": order_data["payment_status"]
+        }
+        append_to_csv(ORDERS_CSV, csv_order_data)
+        logger.info(f"Order {order_id} saved to CSV as backup")
+    except Exception as e:
+        # Even if CSV fails, the order is still valid (in Redis)
+        logger.error(f"CSV backup failed for order {order_id}, but order is valid in Redis: {str(e)}")
+    
+    # Notify supervisor
+    notify_supervisor(order_id, branch, order_data["items"])
+    
+    # Clear cart
+    redis_state.clear_cart(user_id)
+    
+    # Handle payment if required
+    if order_data["payment_required"]:
+        # Send payment link
+        send_payment_link(user_id, order_id, order_data["total"])
+        return True, f"Order #{order_id} placed successfully! Please complete payment to confirm your order."
+    else:
+        # Send order confirmation
+        send_order_confirmation(user_id, order_id, branch)
+        
+        # Update order status to PAID
+        update_order_status(order_id, ORDER_STATUS["PAID"])
+        
+        return True, f"Order #{order_id} placed successfully! Your order is being processed."
+
+
+def update_order_status(order_id, status):
+    """Update order status in Redis and CSV with notifications"""
+    logger.info(f"Updating order {order_id} status to {status}")
+    
+    # Validate status
+    valid_statuses = list(ORDER_STATUS.values())
+    if status not in valid_statuses:
+        logger.error(f"Invalid status '{status}' for order {order_id}. Valid statuses: {valid_statuses}")
+        return False
+    
+    # Try to find the order in Redis first (primary data source)
+    order = None
+    all_orders = redis_state.redis.lrange("orders:all", 0, -1)
+    order_index = -1
+    
+    for i, order_str in enumerate(all_orders):
+        o = json.loads(order_str)
+        if o["order_id"] == order_id:
+            order = o
+            order_index = i
+            break
+    
+    # If not found in Redis, check CSV as fallback
+    if not order:
+        logger.warning(f"Order {order_id} not found in Redis, checking CSV")
+        orders = read_csv(ORDERS_CSV)
+        for i, o in enumerate(orders):
+            if o["order_id"] == order_id:
+                # Reconstruct order structure
+                order = {
+                    "order_id": o["order_id"],
+                    "user_id": o["user_id"],
+                    "branch": o["branch"],
+                    "items": json.loads(o["items"]),
+                    "total": float(o["total"]),
+                    "status": o["status"],
+                    "order_date": o["order_date"],
+                    "payment_required": o["payment_required"] == "True",
+                    "payment_status": o["payment_status"]
+                }
+                order_index = i
+                # Re-add to Redis since it was missing
+                redis_state.redis.rpush("orders:all", json.dumps(order))
+                redis_state.redis.rpush(f"orders:branch:{order['branch'].lower()}", json.dumps(order))
+                logger.info(f"Recovered order {order_id} from CSV and added back to Redis")
+                break
+    
+    if not order:
+        logger.error(f"Order {order_id} not found in Redis or CSV")
+        return False
+    
+    # Don't allow status downgrade
+    status_priority = {
+        ORDER_STATUS["PENDING"]: 1,
+        ORDER_STATUS["PAID"]: 2,
+        ORDER_STATUS["READY"]: 3,
+        ORDER_STATUS["DELIVERED"]: 4,
+        ORDER_STATUS["COMPLETED"]: 5
     }
     
-    # Add to pending orders in Redis
-    add_pending_order(order_id, order_data)
+    current_priority = status_priority.get(order["status"], 0)
+    new_priority = status_priority.get(status, 0)
     
-    # Log to CSV
-    log_order_to_csv(order_data)
+    if new_priority < current_priority:
+        logger.warning(f"Attempt to downgrade status for order {order_id} from {order['status']} to {status}")
+        return False
     
-    # Send confirmation message
-    send_order_confirmation(user_id, order_id, branch, cart, total, payment_required)
+    # Update the order
+    updated_order = {
+        **order,
+        "status": status,
+        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
     
-    # If payment is required, send payment link
-    if payment_required:
-        send_payment_link(user_id, order_id, total)
+    # Update in Redis
+    if order_index >= 0:
+        # Update in main orders list
+        redis_state.redis.lset("orders:all", order_index, json.dumps(updated_order))
+        
+        # Update in branch-specific list
+        branch_orders = redis_state.redis.lrange(f"orders:branch:{order['branch'].lower()}", 0, -1)
+        for i, order_str in enumerate(branch_orders):
+            o = json.loads(order_str)
+            if o["order_id"] == order_id:
+                redis_state.redis.lset(f"orders:branch:{order['branch'].lower()}", i, json.dumps(updated_order))
+                break
     
-    # Clear user's cart
-    clear_user_cart(user_id)
+    # Update in CSV as backup
+    try:
+        update_order_in_csv(order_id, updated_order)
+    except Exception as e:
+        logger.error(f"Failed to update CSV for order {order_id}: {str(e)}")
+        # Continue execution since Redis has the update
     
-    # Update user state
-    state["step"] = "order_placed"
-    state["order_id"] = order_id
-    set_user_state(user_id, state)
+    # Send notifications based on new status
+    if status == ORDER_STATUS["READY"]:
+        # Notify delivery person (Ashok) that order is ready
+        message = f"📦 *ORDER READY FOR DELIVERY*\n\nOrder ID: #{order_id}\nBranch: {order['branch'].title()}"
+        send_text_message(STAFF_CONTACTS["ashok"], message)
+        
+        # Notify customer that order is ready
+        send_text_message(order["user_id"], f"📦 Your order #{order_id} is ready for delivery!")
+        
+    elif status == ORDER_STATUS["DELIVERED"]:
+        # Notify customer that order has been delivered
+        send_text_message(order["user_id"], f"✅ Your order #{order_id} has been delivered successfully!")
+        
+        # Check if all orders for the day are delivered
+        todays_orders = redis_state.get_todays_orders()
+        all_delivered = all(o["status"] == ORDER_STATUS["DELIVERED"] for o in todays_orders)
+        
+        if all_delivered:
+            # Notify supervisor that all orders are delivered
+            send_text_message(STAFF_CONTACTS["krishna"], "✅ *ALL ORDERS DELIVERED*\n\nAll orders for today have been successfully delivered.")
     
-    log_user_activity(user_id, "order_placed", f"Order ID: {order_id}, Total: {total}")
+    elif status == ORDER_STATUS["COMPLETED"]:
+        # Final completion notification
+        send_text_message(STAFF_CONTACTS["krishna"], f"✅ *DAY COMPLETED*\n\nOrder #{order_id} marked as completed. All processes finished.")
     
-    return True, order_id
+    logger.info(f"Order {order_id} status updated to {status} successfully")
+    return True
 
 def confirm_order(whatsapp_number, payment_method, order_id, paid=False):
-    """Confirm order after payment"""
-    log_user_activity(whatsapp_number, "order_confirmation", f"Order ID: {order_id}, Paid: {paid}")
+    """Confirm order after payment with Redis-first approach"""
+    logger.info(f"Confirming order {order_id} for {whatsapp_number}")
     
-    # Get order from pending orders
-    order_data = get_order_status(order_id)
+    # Try to find the order in Redis first
+    order = None
+    all_orders = redis_state.redis.lrange("orders:all", 0, -1)
+    for order_str in all_orders:
+        o = json.loads(order_str)
+        if o["order_id"] == order_id:
+            order = o
+            break
     
-    if not order_data:
-        log_user_activity(whatsapp_number, "order_error", f"Order not found: {order_id}")
-        return False, "Order not found"
+    # If not found in Redis, check CSV as fallback
+    if not order:
+        logger.warning(f"Order {order_id} not found in Redis, checking CSV")
+        orders = read_csv(ORDERS_CSV)
+        for o in orders:
+            if o["order_id"] == order_id:
+                # Reconstruct order structure
+                order = {
+                    "order_id": o["order_id"],
+                    "user_id": o["user_id"],
+                    "branch": o["branch"],
+                    "items": json.loads(o["items"]),
+                    "total": float(o["total"]),
+                    "status": o["status"],
+                    "order_date": o["order_date"],
+                    "payment_required": o["payment_required"] == "True",
+                    "payment_status": o["payment_status"]
+                }
+                # Re-add to Redis since it was missing
+                redis_state.redis.rpush("orders:all", json.dumps(order))
+                redis_state.redis.rpush(f"orders:branch:{order['branch'].lower()}", json.dumps(order))
+                logger.info(f"Recovered order {order_id} from CSV and added back to Redis")
+                break
+    
+    if not order:
+        logger.error(f"Order {order_id} not found in Redis or CSV")
+        return False
     
     if paid:
-        # Move from pending to active
-        order_data["payment_status"] = "completed"
-        order_data["status"] = "confirmed"
+        # Update order status in Redis
+        updated_order = {
+            **order,
+            "status": ORDER_STATUS["PAID"],
+            "payment_status": "PAID",
+            "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
         
-        # Remove from pending
-        from stateHandlers.redis_state import remove_pending_order
-        remove_pending_order(order_id)
+        # Replace the order in Redis
+        all_orders = redis_state.redis.lrange("orders:all", 0, -1)
+        for i, order_str in enumerate(all_orders):
+            o = json.loads(order_str)
+            if o["order_id"] == order_id:
+                redis_state.redis.lset("orders:all", i, json.dumps(updated_order))
+                break
         
-        # Add to active
-        from stateHandlers.redis_state import add_active_order
-        add_active_order(order_id, order_data)
+        # Update branch-specific list
+        branch_orders = redis_state.redis.lrange(f"orders:branch:{order['branch'].lower()}", 0, -1)
+        for i, order_str in enumerate(branch_orders):
+            o = json.loads(order_str)
+            if o["order_id"] == order_id:
+                redis_state.redis.lset(f"orders:branch:{order['branch'].lower()}", i, json.dumps(updated_order))
+                break
         
-        # Send confirmation to user
-        message = f"✅ *Payment Confirmed!*\n\nYour order #{order_id} has been confirmed and will be processed."
-        from services.whatsapp_service import send_text_message
-        send_text_message(whatsapp_number, message)
+        # Also update CSV as backup
+        try:
+            update_order_in_csv(order_id, updated_order)
+        except Exception as e:
+            logger.error(f"Failed to update CSV for order {order_id}: {str(e)}")
         
-        log_user_activity(whatsapp_number, "order_confirmed", f"Order ID: {order_id}")
-        return True, "Order confirmed"
-    
-    log_user_activity(whatsapp_number, "order_error", f"Payment not completed for order: {order_id}")
-    return False, "Payment not completed"
-
-def update_order_status_internal(order_id, status, notes=None):
-    """Internal function to update order status"""
-    result = update_order_status(order_id, status, notes)
-    
-    if result:
-        # Get customer number from order data
-        customer_number = result.get("customer_number")
+        # Send order confirmation
+        send_order_confirmation(whatsapp_number, order_id, order["branch"])
         
-        # Send status update to customer
-        if customer_number:
-            from services.whatsapp_service import send_status_update
-            send_status_update(customer_number, order_id, status, notes)
-        
-        log_user_activity(customer_number or "system", "order_status_updated", 
-                         f"Order ID: {order_id}, Status: {status}")
+        logger.info(f"Order {order_id} confirmed and payment marked as paid")
         return True
     
+    logger.warning(f"Order {order_id} confirmation failed - payment not completed")
     return False
 
-def get_todays_orders():
-    """Get all orders for today's cycle"""
-    # In a real implementation, you would fetch from Redis or CSV
-    # For now, we'll return a sample
-    
-    # Determine today's cycle start time (7 AM today)
-    now = datetime.now()
-    cycle_start = now.replace(hour=CUT_OFF_HOUR, minute=0, second=0, microsecond=0)
-    
-    if now.hour < CUT_OFF_HOUR:
-        # If before 7 AM, consider yesterday's 7 AM as cycle start
-        cycle_start = cycle_start - timedelta(days=1)
-    
-    # In a real implementation, you would filter orders based on time
-    # For now, return a sample
-    return [
-        {
-            "order_id": "FCT0715A1B2",
-            "branch": "nanakramguda",
-            "items": [
-                {"item": "banana", "quantity": 3, "unit": "kg"},
-                {"item": "custard can", "quantity": 1},
-                {"item": "apricot delight", "quantity": 5},
-                {"item": "strawberry delight", "quantity": 2}
+def update_order_in_csv(order_id, order_data):
+    """Update an order in the CSV file"""
+    try:
+        # Read existing orders
+        orders = read_csv(ORDERS_CSV)
+        
+        # Update the matching order
+        updated = False
+        for i, order in enumerate(orders):
+            if order["order_id"] == order_id:
+                # Convert Redis order format to CSV format
+                orders[i] = {
+                    "order_id": order_data["order_id"],
+                    "user_id": order_data["user_id"],
+                    "branch": order_data["branch"],
+                    "items": json.dumps(order_data["items"]),
+                    "total": order_data["total"],
+                    "status": order_data["status"],
+                    "order_date": order_data["order_date"],
+                    "payment_required": str(order_data["payment_required"]),
+                    "payment_status": order_data["payment_status"],
+                    "updated_at": order_data.get("updated_at", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                }
+                updated = True
+                break
+        
+        if not updated:
+            logger.warning(f"Order {order_id} not found in CSV for update, adding new entry")
+            # Add as new entry if not found
+            append_to_csv(ORDERS_CSV, {
+                "order_id": order_data["order_id"],
+                "user_id": order_data["user_id"],
+                "branch": order_data["branch"],
+                "items": json.dumps(order_data["items"]),
+                "total": order_data["total"],
+                "status": order_data["status"],
+                "order_date": order_data["order_date"],
+                "payment_required": str(order_data["payment_required"]),
+                "payment_status": order_data["payment_status"],
+                "updated_at": order_data.get("updated_at", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            })
+            return True
+        
+        # Rewrite CSV with updated order
+        with open(ORDERS_CSV, 'w', newline='') as f:
+            headers = list(orders[0].keys()) if orders else [
+                "order_id", "user_id", "branch", "items", "total", "status", 
+                "order_date", "payment_required", "payment_status", "updated_at"
             ]
-        },
-        {
-            "order_id": "FCT0715C3D4",
-            "branch": "manikonda",
-            "items": [
-                {"item": "custard can", "quantity": 2},
-                {"item": "oatmeal", "quantity": 2, "unit": "kg"},
-                {"item": "strawberry delight", "quantity": 4},
-                {"item": "blueberry delight", "quantity": 1},
-                {"item": "apple", "quantity": 2, "unit": "kg"},
-                {"item": "hand gloves", "quantity": 1, "unit": "pack"}
-            ]
-        }
-    ]
+            writer = csv.DictWriter(f, fieldnames=headers)
+            writer.writeheader()
+            for order in orders:
+                writer.writerow(order)
+        
+        logger.info(f"Order {order_id} updated in CSV")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to update order in CSV: {str(e)}")
+        return False
 
-def get_production_lists():
-    """Get production lists for Sochin and Sagar"""
-    orders = get_todays_orders()
+def send_production_lists():
+    """Send production lists to chefs at 7:00 AM using Redis data"""
+    logger.info("Sending production lists to chefs from Redis")
     
-    sochin_items = {}
-    sagar_items = {}
+    # Get orders directly from Redis (primary source)
+    orders = redis_state.get_todays_orders()
     
-    for order in orders:
-        for item in order["items"]:
-            item_name = item["item"].lower()
-            
-            # Check if it's Sochin's responsibility
-            if item_name in ["custard can", "mango custard", "oatmeal", "less sugar custards"]:
-                if item_name in sochin_items:
-                    sochin_items[item_name] += item["quantity"]
-                else:
-                    sochin_items[item_name] = item["quantity"]
-            
-            # Check if it's Sagar's responsibility
-            elif "delight" in item_name:
-                if item_name in sagar_items:
-                    sagar_items[item_name] += item["quantity"]
-                else:
-                    sagar_items[item_name] = item["quantity"]
-    
-    return {
-        "sochin": sochin_items,
-        "sagar": sagar_items
+    # Group orders by product category
+    production_list = {
+        "custard": [],
+        "delights": []
     }
-
-def get_delivery_list():
-    """Get delivery list for Ashok"""
-    orders = get_todays_orders()
-    
-    delivery_list = {}
     
     for order in orders:
-        branch = order["branch"]
+        # Parse items from order
+        try:
+            for item in order["items"]:
+                for category, products in PRODUCT_CATEGORIES.items():
+                    if any(product in item['name'].lower() for product in products):
+                        production_list[category].append({
+                            "name": item['name'],
+                            "quantity": item['quantity'],
+                            "branch": order['branch']
+                        })
+        except Exception as e:
+            logger.error(f"Error parsing order items for order {order.get('order_id')}: {str(e)}")
+    
+    # Send to Sochin (custard items)
+    if production_list["custard"]:
+        message = "🍳 *PRODUCTION LIST - SOCHIN*\n\n"
+        for item in production_list["custard"]:
+            message += f"• {item['name'].title()} x{item['quantity']} ({item['branch'].title()})\n"
+        send_text_message(STAFF_CONTACTS["David"], message)
+    
+    # Send to Sagar (delights items)
+    if production_list["delights"]:
+        message = "🍰 *PRODUCTION LIST - SAGAR*\n\n"
+        for item in production_list["delights"]:
+            message += f"• {item['name'].title()} x{item['quantity']} ({item['branch'].title()})\n"
+        send_text_message(STAFF_CONTACTS["David"], message)
+
+def send_daily_delivery_list():
+    """Send delivery list to Ashok at 7:00 AM using Redis data"""
+    logger.info("Sending delivery list to Ashok from Redis")
+    
+    # Get orders directly from Redis (primary source)
+    orders = redis_state.get_todays_orders()
+    
+    # Group orders by branch
+    delivery_list = {}
+    for order in orders:
+        branch = order['branch']
         if branch not in delivery_list:
             delivery_list[branch] = []
         
-        for item in order["items"]:
-            delivery_list[branch].append(item)
+        # Parse items
+        try:
+            for item in order["items"]:
+                delivery_list[branch].append({
+                    "name": item['name'],
+                    "quantity": item['quantity']
+                })
+        except Exception as e:
+            logger.error(f"Error parsing order items for order {order.get('order_id')}: {str(e)}")
     
-    return delivery_list
-
-def send_production_lists():
-    """Send production lists to Sochin and Sagar"""
-    lists = get_production_lists()
-    
-    # Format Sochin's list
-    sochin_msg = ""
-    for item, quantity in lists["sochin"].items():
-        if "kg" in item:
-            sochin_msg += f"- {item.title()} - {quantity}kg\n"
-        else:
-            sochin_msg += f"- {item.title()} - {quantity}\n"
-    
-    # Format Sagar's list
-    sagar_msg = ""
-    for item, quantity in lists["sagar"].items():
-        if "kg" in item:
-            sagar_msg += f"- {item.title()} - {quantity}kg\n"
-        else:
-            sagar_msg += f"- {item.title()} - {quantity}\n"
-    
-    # Send messages
-    from services.whatsapp_service import send_text_message
-    from config.settings import STAFF_CONTACTS
-    
-    if sochin_msg:
-        send_text_message(STAFF_CONTACTS["sochin"], 
-                         f"🍳 *PRODUCTION LIST - SOCHIN*\n\n{sochin_msg}\n\nPlease prepare these items for delivery today.")
-    
-    if sagar_msg:
-        send_text_message(STAFF_CONTACTS["sagar"], 
-                         f"🍰 *PRODUCTION LIST - SAGAR*\n\n{sagar_msg}\n\nPlease prepare these items for delivery today.")
-
-def send_daily_delivery_list():
-    """Send delivery list to Ashok"""
-    delivery_list = get_delivery_list()
-    
-    if not delivery_list:
-        return
-    
-    msg = "📦 *DELIVERY SCHEDULE*\n\n"
-    
-    for branch, items in delivery_list.items():
-        msg += f"*{branch.title()}:*\n"
-        for item in items:
-            if "unit" in item:
-                msg += f"- {item['item'].title()} - {item['quantity']}{item['unit']}\n"
-            else:
-                msg += f"- {item['item'].title()} - {item['quantity']}\n"
-        msg += "\n"
-    
-    from services.whatsapp_service import send_text_message
-    from config.settings import STAFF_CONTACTS
-    
-    send_text_message(STAFF_CONTACTS["ashok"], msg)
+    # Format message
+    if delivery_list:
+        message = "🚚 *DAILY DELIVERY LIST*\n\n"
+        for branch, items in delivery_list.items():
+            message += f"*{branch.title()}*\n"
+            for item in items:
+                message += f"• {item['name'].title()} x{item['quantity']}\n"
+            message += "\n"
+        
+        send_text_message(STAFF_CONTACTS["David"], message)
+    else:
+        logger.info("No orders for delivery today")
 
 def send_daily_reminder_to_branches():
-    """Send daily reminder to all branches"""
-    reminder_msg = "⏰ *DAILY REMINDER*\n\nHello! Please order any raw materials required today via WhatsApp bot.\n\n*Cut-off time:* 7:00 AM tomorrow\n\nReply with 'menu' to start ordering."
-    
-    from config.settings import BRANCHES
-    from services.whatsapp_service import send_text_message
-    
-    # In a real implementation, you would have actual branch numbers
-    # For demo, we'll use sample numbers
-    branch_numbers = {
-        "madhapur": "919876543210",
-        "kondapur": "919876543211",
-        "west maredpally": "919876543212",
-        "manikonda": "919876543213",
-        "nanakramguda": "919876543214",
-        "nizampet": "919876543215",
-        "miyapur": "919876543216",
-        "pragathinagar": "919876543217"
-    }
-    
-    for branch, number in branch_numbers.items():
-        send_text_message(number, reminder_msg)
+    """Wrapper for sending daily reminder"""
+    from services.whatsapp_service import send_daily_reminder
+    send_daily_reminder()

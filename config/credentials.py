@@ -11,9 +11,11 @@ RAZORPAY_KEY_SECRET = "FEMHAO4zeUFnAiKZPLe44NRN"
 
 # WHATSAPP_API_URL = f"https://graph.facebook.com/v18.0/{META_PHONE_NUMBER_ID}/messages" 
 WHATSAPP_API_URL = f"https://graph.facebook.com/v23.0/{META_PHONE_NUMBER_ID}/messages" 
+WHATSAPP_CATALOG_ID = "757949926723078"
 
 
 # Redis configuration
+REDIS_URL = "redis://localhost:6379/0" 
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_DB = 0

@@ -743,3 +743,73 @@ system,2025-07-28 18:36:22,webhook_received,POST request
 system,2025-07-28 18:36:22,message_received,New message received
 system,2025-07-28 18:36:22,webhook_received,POST request
 system,2025-07-28 18:36:22,message_received,New message received
+system,2025-07-28 18:53:29,app_started,Flask server started
+system,2025-07-28 18:53:29,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 18:53:30,scheduler_started,Daily tasks scheduler started
+system,2025-07-28 18:53:30,app_started,Flask server started
+system,2025-07-28 18:53:38,webhook_received,POST request
+system,2025-07-28 18:53:38,message_received,New message received
+918074301029,2025-07-28 18:53:38,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:38,catalog_order_received,Received 2 items from catalog
+918074301029,2025-07-28 18:53:38,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:38,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:38,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 18:53:38,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:38,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:38,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 18:53:43,webhook_received,POST request
+system,2025-07-28 18:53:43,webhook_received,POST request
+system,2025-07-28 18:53:43,message_received,New message received
+system,2025-07-28 18:53:43,message_received,New message received
+system,2025-07-28 18:53:43,webhook_received,POST request
+system,2025-07-28 18:53:43,message_received,New message received
+system,2025-07-28 18:53:44,webhook_received,POST request
+system,2025-07-28 18:53:44,message_received,New message received
+918074301029,2025-07-28 18:53:44,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:44,catalog_order_received,Received 2 items from catalog
+918074301029,2025-07-28 18:53:44,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:44,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:44,greeting_received,User greeted the bot or initiated from catalog
+918074301029,2025-07-28 18:53:44,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:44,state_updated,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:44,interactive_list_sent,Header: 🍴 Central Kitchen Ordering
+system,2025-07-28 18:53:46,webhook_received,POST request
+system,2025-07-28 18:53:46,message_received,New message received
+system,2025-07-28 18:53:47,webhook_received,POST request
+system,2025-07-28 18:53:47,webhook_received,POST request
+system,2025-07-28 18:53:47,message_received,New message received
+system,2025-07-28 18:53:47,message_received,New message received
+system,2025-07-28 18:53:50,webhook_received,POST request
+system,2025-07-28 18:53:50,message_received,New message received
+918074301029,2025-07-28 18:53:50,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:50,branch_selected,Branch: kondapur
+918074301029,2025-07-28 18:53:50,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:50,catalog_processing,Processing 2 catalog items
+918074301029,2025-07-28 18:53:50,catalog_item,Processing item ID: 10.00 -> 10
+918074301029,2025-07-28 18:53:50,catalog_add,Adding Watermelon 1pc x1
+918074301029,2025-07-28 18:53:50,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:50,cart_update,Adding new item: Watermelon 1pc x1 @ Rs. 60.0
+918074301029,2025-07-28 18:53:50,state_retrieved,"Step: select_branch, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:50,state_updated,"Step: select_branch, Cart: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:53:50,cart_updated,"Items: 1, Total: 60.0"
+918074301029,2025-07-28 18:53:50,cart_final,"Cart after add: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:53:50,catalog_item,Processing item ID: 15.00 -> 15
+918074301029,2025-07-28 18:53:50,catalog_add,Adding Sandwich packing box (pack of 50) x1
+918074301029,2025-07-28 18:53:50,state_retrieved,"Step: select_branch, Cart: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:53:50,cart_update,Adding new item: Sandwich packing box (pack of 50) x1 @ Rs. 51.0
+918074301029,2025-07-28 18:53:50,state_retrieved,"Step: select_branch, Cart: Watermelon 1pc x1, Total: 60.0"
+918074301029,2025-07-28 18:53:50,state_updated,"Step: select_branch, Cart: Watermelon 1pc x1, Sandwich packing box (pack of 50) x1, Total: 111.0"
+918074301029,2025-07-28 18:53:50,cart_updated,"Items: 2, Total: 111.0"
+918074301029,2025-07-28 18:53:50,cart_final,"Cart after add: Watermelon 1pc x1, Sandwich packing box (pack of 50) x1, Total: 111.0"
+918074301029,2025-07-28 18:53:50,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:50,state_retrieved,"Step: browse_menu, Cart: empty, Total: 0"
+918074301029,2025-07-28 18:53:50,cart_retrieved,Cart contents: empty
+918074301029,2025-07-28 18:53:50,cart_error,No items added from catalog (tried 2 items)
+918074301029,2025-07-28 18:53:50,interactive_list_sent,Header: 🍽️ Menu Categories
+918074301029,2025-07-28 18:53:51,state_updated,"Step: browse_menu, Cart: empty, Total: 0"
+system,2025-07-28 18:53:53,webhook_received,POST request
+system,2025-07-28 18:53:53,webhook_received,POST request
+system,2025-07-28 18:53:53,message_received,New message received
+system,2025-07-28 18:53:53,webhook_received,POST request
+system,2025-07-28 18:53:53,message_received,New message received
+system,2025-07-28 18:53:53,message_received,New message received
