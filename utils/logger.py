@@ -99,3 +99,10 @@ def log_user_activity(user_id, activity_type, details):
     except Exception as e:
         # We can't use the normal logger here due to potential circular imports
         print(f"[LOGGER] Failed to log to CSV: {str(e)}")
+
+
+def truncate_text(text, max_length=24):
+    """Truncate text to specified max length, adding ellipsis if needed"""
+    if len(text) > max_length:
+        return text[:max_length-1] + "…"
+    return text

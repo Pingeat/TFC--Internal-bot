@@ -2,7 +2,7 @@
 import requests
 import json
 from config.credentials import META_ACCESS_TOKEN, WHATSAPP_API_URL, WHATSAPP_CATALOG_ID
-from config.settings import PRODUCT_CATEGORIES, BRANCHES, PAYMENT_BRANCHES, STAFF_CONTACTS, PRODUCT_PRICES
+from config.settings import CATEGORY_DISPLAY_NAMES, ORDER_STATUS, PRODUCT_CATALOG, PRODUCT_CATEGORIES, BRANCHES, PAYMENT_BRANCHES, STAFF_ASSIGNMENTS, STAFF_CONTACTS, PRODUCT_PRICES
 from utils.logger import get_logger
 from stateHandlers.redis_state import redis_state
 
@@ -116,7 +116,7 @@ def send_full_catalog(to, branch=None):
             },
             "action": {
                 "name": "catalog_message",
-                "catalog_id": WHATSAPP_CATALOG_ID 
+                "catalog_id": WHATSAPP_CATALOG_ID
             }
         }
     }
@@ -144,7 +144,6 @@ def send_cart_summary(to):
     """Send cart summary to user with interactive buttons"""
     logger.info(f"Sending cart summary to {to}")
     cart = redis_state.get_cart(to)
-    print("[CART]:", cart)
     if not cart["items"]:
         message = "🛒 *YOUR CART IS EMPTY*\n\n"
         message += "Use the catalog to add items to your cart."
@@ -249,9 +248,9 @@ def send_payment_link(to, order_id, amount):
     return send_text_message(to, message)
 
 def notify_supervisor(order_id, branch, items):
-    """Notify supervisor (Krishna) about new order with Redis validation"""
+    """Notify supervisor (Krishna) about new order with dynamic staff assignment"""
     logger.info(f"Notifying supervisor about order {order_id} from {branch}")
-    print("[ITEMS]:", items)
+    
     # Double-check branch consistency
     if not branch or branch.lower() not in [b.lower() for b in BRANCHES]:
         logger.error(f"Invalid branch in order notification: {branch}")
@@ -265,83 +264,249 @@ def notify_supervisor(order_id, branch, items):
     for item in items:
         message += f"• {item['name'].title()} x{item['quantity']}\n"
     
-    return send_text_message(STAFF_CONTACTS["krishna"], message)
+    # Send to all supervisors
+    for staff in STAFF_ASSIGNMENTS:
+        if "supervisor" in STAFF_ASSIGNMENTS[staff] and staff in STAFF_CONTACTS:
+            logger.info(f"Sending order notification to Supervisor: {STAFF_CONTACTS[staff]}")
+            send_text_message(STAFF_CONTACTS[staff], message)
+    # send_production_lists()
+    # send_daily_delivery_list()
+    
+def send_branch_delivery_instructions(to):
+    """Send delivery instructions to delivery staff"""
+    logger.info(f"Sending delivery instructions to {to}")
+    
+    message = "🚚 *DELIVERY COMMANDS*\n\n"
+    message += "To update delivery status, use these commands:\n\n"
+    message += "• *Ready [Branch]* - Mark all orders for a branch as READY\n"
+    message += "• *Delivered [Branch]* - Mark all READY orders for a branch as DELIVERED\n"
+    message += "• *Completed [Branch]* - Mark all DELIVERED orders for a branch as COMPLETED\n\n"
+    message += "Example: \"Delivered Kondapur\"\n\n"
+    message += "Type \"/list\" to see current delivery status for all branches."
+    
+    return send_text_message(to, message)
 
-def send_production_list():
-    """Send production lists to chefs at 7:00 AM using Redis data"""
-    logger.info("Sending production lists to chefs from Redis")
+def send_delivery_status(to):
+    """Send current delivery status for all branches"""
+    logger.info(f"Sending delivery status to {to}")
+    
+    # Get all orders
+    orders = redis_state.get_todays_orders()
+    
+    # Group by branch and status
+    branch_status = {}
+    for order in orders:
+        branch = order["branch"].lower()
+        if branch not in branch_status:
+            branch_status[branch] = {
+                "ready": 0,
+                "delivered": 0,
+                "total": 0
+            }
+        
+        branch_status[branch]["total"] += 1
+        if order["status"] == ORDER_STATUS["READY"]:
+            branch_status[branch]["ready"] += 1
+        elif order["status"] == ORDER_STATUS["DELIVERED"]:
+            branch_status[branch]["delivered"] += 1
+    
+    # Create status message
+    message = "📊 *CURRENT DELIVERY STATUS*\n\n"
+    for branch, status in branch_status.items():
+        branch_name = next((b for b in BRANCHES if b.lower() == branch), branch)
+        message += f"*{branch_name.title()}*\n"
+        message += f"• Total Orders: {status['total']}\n"
+        message += f"• Ready for Delivery: {status['ready']}\n"
+        message += f"• Delivered: {status['delivered']}\n\n"
+    
+    message += "Use delivery commands to update status."
+    
+    return send_text_message(to, message)
+
+def send_delivery_confirmation(to, branch, status, count):
+    """Send delivery confirmation message"""
+    logger.info(f"Sending delivery confirmation for {branch} to {to}")
+    
+    status_text = status.lower().replace("_", " ").title()
+    
+    message = f"✅ *{status_text.upper()}*\n\n"
+    message += f"Branch: {branch.title()}\n"
+    message += f"Orders updated: {count}\n\n"
+    message += f"All orders for this branch have been marked as {status_text}.\n\n"
+    message += "Type \"/status\" for current delivery status."
+    
+    return send_text_message(to, message)
+
+def send_production_lists():
+    """Send production lists to appropriate staff based on dynamic category assignments"""
+    logger.info("Sending production lists to staff from Redis")
     
     # Get orders directly from Redis (primary source)
     orders = redis_state.get_todays_orders()
     
-    # Group orders by product category
-    production_list = {
-        "custard": [],
-        "delights": []
-    }
+    # Group orders by category with aggregation
+    categorized_orders = {}
     
+    # Initialize all categories
+    for category in PRODUCT_CATEGORIES.keys():
+        categorized_orders[category] = {}
+    
+    # First pass: aggregate quantities by product and branch
     for order in orders:
         # Parse items from order
         try:
             for item in order["items"]:
-                for category, products in PRODUCT_CATEGORIES.items():
-                    if any(product in item['name'].lower() for product in products):
-                        production_list[category].append({
-                            "name": item['name'],
-                            "quantity": item['quantity'],
-                            "branch": order['branch']
-                        })
+                product_name = item['name'].lower()
+                
+                # Try to get category from catalog first (most reliable)
+                catalog_product = None
+                for pid, pinfo in PRODUCT_CATALOG.items():
+                    if pinfo["name"].lower() == product_name:
+                        catalog_product = pinfo
+                        break
+                
+                # Determine category
+                category = None
+                if catalog_product and "category" in catalog_product:
+                    category = catalog_product["category"]
+                else:
+                    # Fallback to keyword matching
+                    for cat, keywords in PRODUCT_CATEGORIES.items():
+                        if any(keyword in product_name for keyword in keywords):
+                            category = cat
+                            break
+                
+                # If still no category, assign to "others"
+                if not category:
+                    category = "others"
+                    logger.warning(f"Product '{item['name']}' could not be categorized, assigned to 'others'")
+                
+                # Initialize product entry if not exists
+                if product_name not in categorized_orders[category]:
+                    categorized_orders[category][product_name] = {
+                        "name": item['name'],
+                        "total_quantity": 0,
+                        "by_branch": {}
+                    }
+                
+                # Update total quantity
+                categorized_orders[category][product_name]["total_quantity"] += item['quantity']
+                
+                # Update branch-specific quantity
+                branch = order['branch'].lower()
+                if branch not in categorized_orders[category][product_name]["by_branch"]:
+                    categorized_orders[category][product_name]["by_branch"][branch] = 0
+                categorized_orders[category][product_name]["by_branch"][branch] += item['quantity']
+                
         except Exception as e:
             logger.error(f"Error parsing order items for order {order.get('order_id')}: {str(e)}")
     
-    # Send to Sochin (custard items)
-    if production_list["custard"]:
-        message = "🍳 *PRODUCTION LIST - SOCHIN*\n\n"
-        for item in production_list["custard"]:
-            message += f"• {item['name'].title()} x{item['quantity']} ({item['branch'].title()})\n"
-        send_text_message(STAFF_CONTACTS["sochin"], message)
+    # Send to appropriate staff based on category assignments
+    staff_lists = {}
     
-    # Send to Sagar (delights items)
-    if production_list["delights"]:
-        message = "🍰 *PRODUCTION LIST - SAGAR*\n\n"
-        for item in production_list["delights"]:
-            message += f"• {item['name'].title()} x{item['quantity']} ({item['branch'].title()})\n"
-        send_text_message(STAFF_CONTACTS["sagar"], message)
+    # Group categories by staff member
+    for staff, assigned_categories in STAFF_ASSIGNMENTS.items():
+        # Skip delivery staff (ashok) for production lists
+        if staff == "ashok":
+            continue
+            
+        staff_lists[staff] = []
+        
+        # Add all categories assigned to this staff
+        for category in assigned_categories:
+            if category in categorized_orders and categorized_orders[category]:
+                staff_lists[staff].append({
+                    "category": category,
+                    "items": categorized_orders[category]
+                })
+    
+    # Special handling for supervisor - send ALL categories
+    if "krishna" in STAFF_ASSIGNMENTS:
+        staff_lists["krishna"] = []
+        for category in categorized_orders:
+            if categorized_orders[category]:
+                staff_lists["krishna"].append({
+                    "category": category,
+                    "items": categorized_orders[category]
+                })
+    
+    # Send messages to each staff member
+    for staff, category_lists in staff_lists.items():
+        if not category_lists:
+            continue
+            
+        # Build message
+        message = f"📋 *PRODUCTION LIST - {staff.title()}*\n\n"
+        
+        for category_list in category_lists:
+            category = category_list["category"]
+            items = category_list["items"]
+            
+            # Get display name for category
+            display_name = CATEGORY_DISPLAY_NAMES.get(category, category.title())
+            message += f"*{display_name}*\n"
+            
+            for product_data in items.values():
+                # Format branch details
+                branch_details = ", ".join([f"{qty} from {branch.title()}" 
+                                          for branch, qty in product_data["by_branch"].items()])
+                message += f"• {product_data['name'].title()} x{product_data['total_quantity']} ({branch_details})\n"
+            
+            message += "\n"
+        
+        # Send to staff
+        if staff in STAFF_CONTACTS:
+            send_text_message(STAFF_CONTACTS[staff], message)
+        else:
+            logger.error(f"Staff {staff} not found in contacts")
 
-def send_delivery_list():
-    """Send delivery list to Ashok at 7:00 AM using Redis data"""
+def send_daily_delivery_list():
+    """Send delivery list to Ashok at 7:00 AM using Redis data with proper aggregation"""
     logger.info("Sending delivery list to Ashok from Redis")
     
     # Get orders directly from Redis (primary source)
     orders = redis_state.get_todays_orders()
     
-    # Group orders by branch
+    # Group orders by branch with product aggregation
     delivery_list = {}
+    
     for order in orders:
-        branch = order['branch']
+        branch = order['branch'].lower()
         if branch not in delivery_list:
-            delivery_list[branch] = []
+            delivery_list[branch] = {}
         
         # Parse items
         try:
             for item in order["items"]:
-                delivery_list[branch].append({
-                    "name": item['name'],
-                    "quantity": item['quantity']
-                })
+                product_name = item['name'].lower()
+                
+                # Initialize product entry if not exists
+                if product_name not in delivery_list[branch]:
+                    delivery_list[branch][product_name] = {
+                        "name": item['name'],
+                        "quantity": 0
+                    }
+                
+                # Aggregate quantity
+                delivery_list[branch][product_name]["quantity"] += item['quantity']
+                
         except Exception as e:
             logger.error(f"Error parsing order items for order {order.get('order_id')}: {str(e)}")
     
     # Format message
     if delivery_list:
         message = "🚚 *DAILY DELIVERY LIST*\n\n"
-        for branch, items in delivery_list.items():
+        for branch, products in delivery_list.items():
             message += f"*{branch.title()}*\n"
-            for item in items:
-                message += f"• {item['name'].title()} x{item['quantity']}\n"
+            for product_data in products.values():
+                message += f"• {product_data['name'].title()} x{product_data['quantity']}\n"
             message += "\n"
         
-        send_text_message(STAFF_CONTACTS["ashok"], message)
+        # Send to all delivery staff (could be multiple)
+        for staff in STAFF_ASSIGNMENTS:
+            if "delivery" in STAFF_ASSIGNMENTS[staff] and staff in STAFF_CONTACTS:
+                send_text_message(STAFF_CONTACTS[staff], message)
+                logger.info(f"Delivery list Sent to Ashok {STAFF_CONTACTS[staff]}")
     else:
         logger.info("No orders for delivery today")
 
