@@ -5,6 +5,7 @@ from config.credentials import META_ACCESS_TOKEN, WHATSAPP_API_URL, WHATSAPP_CAT
 from config.settings import CATEGORY_DISPLAY_NAMES, ORDER_STATUS, PRODUCT_CATALOG, PRODUCT_CATEGORIES, BRANCHES, PAYMENT_BRANCHES, STAFF_ASSIGNMENTS, STAFF_CONTACTS, PRODUCT_PRICES
 from utils.logger import get_logger
 from stateHandlers.redis_state import redis_state
+from utils.payments_utils import generate_payment_link
 
 logger = get_logger("whatsapp_service")
 
@@ -237,7 +238,7 @@ def send_payment_link(to, order_id, amount):
     logger.info(f"Sending payment link to {to} for order {order_id}")
     
     # In a real implementation, this would generate a Razorpay payment link
-    payment_link = f"https://api.razorpay.com/v1/payment_links/create?order_id={order_id}&amount={amount}"
+    payment_link = generate_payment_link(to,amount,order_id)
     
     message = "💳 *PAYMENT REQUIRED*\n\n"
     message += f"Please complete payment for your order #{order_id}:\n\n"
