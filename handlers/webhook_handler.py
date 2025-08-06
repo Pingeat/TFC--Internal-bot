@@ -53,7 +53,7 @@ def payment_success():
         return "Missing parameters", 400
 
 # Razorpay webhook (for production)
-@webhook_bp.route("/razorpay-webhook", methods=["POST"])
+@webhook_bp.route("/razorpay-webhook-tfcmarket", methods=["POST"])
 def razorpay_webhook():
     """Handle Razorpay payment webhook"""
     logger.info("Razorpay webhook received.")
