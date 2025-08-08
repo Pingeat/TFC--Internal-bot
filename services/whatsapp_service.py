@@ -371,7 +371,6 @@ def send_production_lists():
     
     # Get orders directly from Redis (primary source)
     orders = redis_state.get_todays_orders()
-    print("[ORDERSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS]", orders)
     # Group orders by category with aggregation
     categorized_orders = {}
     
