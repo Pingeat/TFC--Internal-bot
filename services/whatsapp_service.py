@@ -241,7 +241,7 @@ def send_payment_link(to, order_id, amount):
     logger.info(f"Sending payment link to {to} for order {order_id}")
     
     # In a real implementation, this would generate a Razorpay payment link
-    payment_link = generate_payment_link(to,1,order_id)
+    payment_link = generate_payment_link(to,amount,order_id)
     
     message = "💳 *PAYMENT REQUIRED*\n\n"
     message += f"Please complete payment for your order #{order_id}:\n\n"
