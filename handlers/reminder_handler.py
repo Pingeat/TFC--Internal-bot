@@ -1,4 +1,5 @@
 # handlers/reminder_handler.py
+from zoneinfo import ZoneInfo
 from services.whatsapp_service import send_daily_delivery_list, send_production_lists
 from utils.logger import get_logger
 from datetime import datetime
@@ -6,7 +7,7 @@ import threading
 import time
 
 logger = get_logger("reminder_handler")
-
+IST = ZoneInfo("Asia/Kolkata")
 # def send_morning_reminders():
 #     """Send morning reminders at 7:05 AM"""
 #     logger.info("Sending daily reminders at 7:05 AM")
@@ -42,7 +43,7 @@ logger = get_logger("reminder_handler")
 def send_morning_reminders():
     """Send morning reminders at 7:05 AM (skip on Sunday)"""
     # Skip if today is Sunday (Monday is 0, Sunday is 6)
-    if datetime.now().weekday() == 6:  # Sunday
+    if datetime.now(IST).weekday() == 6:  # Sunday
         logger.info("Today is Sunday. Kitchen is closed. Skipping morning reminders.")
         return
     
@@ -52,7 +53,7 @@ def send_morning_reminders():
 def send_kitchen_notifications():
     """Send kitchen notifications at 7:00 AM (skip on Sunday)"""
     # Skip if today is Sunday (Monday is 0, Sunday is 6)
-    if datetime.now().weekday() == 6:  # Sunday
+    if datetime.now(IST).weekday() == 6:  # Sunday
         logger.info("Today is Sunday. Kitchen is closed. Skipping kitchen notifications.")
         return
     
@@ -66,7 +67,7 @@ def schedule_daily_tasks():
     
     # Run continuously
     while True:
-        now = datetime.now()
+        now = datetime.now(IST)
         
         # Skip if today is Sunday (Monday is 0, Sunday is 6)
         if now.weekday() == 6:  # Sunday
@@ -82,7 +83,7 @@ def schedule_daily_tasks():
         if now.hour == 7 and now.minute == 0:
             send_kitchen_notifications()
             
-        if now.hour == 18 and now.minute == 12:
+        if now.hour == 18 and now.minute == 40:
             send_kitchen_notifications()
         
         # Sleep for 1 minute before checking again
