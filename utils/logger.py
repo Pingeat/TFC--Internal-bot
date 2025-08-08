@@ -58,6 +58,7 @@ import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from config.settings import USER_LOG_CSV
+from utils.time_utils import get_current_ist
 
 IST = ZoneInfo("Asia/Kolkata")
 def get_logger(name):
@@ -88,7 +89,7 @@ def log_user_activity(user_id, activity_type, details):
         from utils.csv_utils import append_to_csv
         
         # Create log entry
-        timestamp = datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = get_current_ist() #datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
         log_entry = {
             "timestamp": timestamp,
             "user_id": user_id,

@@ -15,12 +15,14 @@ from services.whatsapp_service import (
 )
 import csv
 
+from utils.time_utils import get_current_ist
+
 logger = get_logger("order_service")
 IST = ZoneInfo("Asia/Kolkata")
 
 def generate_order_id():
     """Generate a unique order ID"""
-    return f"FCT{datetime.now(IST).strftime('%Y%m%d')}{str(uuid.uuid4())[:4].upper()}"
+    return f"FCT{get_current_ist().strftime('%Y%m%d')}{str(uuid.uuid4())[:4].upper()}"
 
 def place_order(user_id, branch):
     """Place an order from user's cart"""
@@ -49,7 +51,7 @@ def place_order(user_id, branch):
         "items": cart["items"],  # Store as Python list
         "total": cart["total"],
         "status": initial_status,
-        "order_date": datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S"),
+        "order_date": get_current_ist().strftime("%Y-%m-%d %H:%M:%S"),
         "payment_required": payment_required,
         "payment_status": "PAID" if not payment_required else "PENDING"
     }
@@ -69,7 +71,7 @@ def place_order(user_id, branch):
             "items": json.dumps(cart["items"]),
             "total": cart["total"],
             "status": initial_status,
-            "order_date": datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S"),
+            "order_date": get_current_ist().strftime("%Y-%m-%d %H:%M:%S"),
             "payment_required": str(payment_required),
             "payment_status": "PAID" if not payment_required else "PENDING"
         }
@@ -137,7 +139,7 @@ def update_branch_status(branch, status):
             updated_order = {
                 **order,
                 "status": status,
-                "updated_at": datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
+                "updated_at": get_current_ist().strftime("%Y-%m-%d %H:%M:%S")
             }
             
             # Update in Redis
@@ -167,7 +169,7 @@ def update_branch_status(branch, status):
                     "order_date": order["order_date"],
                     "payment_required": str(order["payment_required"]),
                     "payment_status": order["payment_status"],
-                    "updated_at": datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
+                    "updated_at": get_current_ist().strftime("%Y-%m-%d %H:%M:%S")
                 }
                 update_order_in_csv(order["order_id"], csv_order_data)
             except Exception as e:
@@ -214,7 +216,7 @@ def update_order_in_csv(order_id, order_data):
                     "order_date": order_data["order_date"],
                     "payment_required": str(order_data["payment_required"]),
                     "payment_status": order_data["payment_status"],
-                    "updated_at": order_data.get("updated_at", datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S"))
+                    "updated_at": order_data.get("updated_at", get_current_ist().strftime("%Y-%m-%d %H:%M:%S"))
                 }
                 updated = True
                 break
@@ -232,7 +234,7 @@ def update_order_in_csv(order_id, order_data):
                 "order_date": order_data["order_date"],
                 "payment_required": str(order_data["payment_required"]),
                 "payment_status": order_data["payment_status"],
-                "updated_at": order_data.get("updated_at", datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S"))
+                "updated_at": order_data.get("updated_at", get_current_ist().strftime("%Y-%m-%d %H:%M:%S"))
             })
             return True
         
@@ -280,7 +282,7 @@ def confirm_order(whatsapp_number, payment_method, order_id, paid=False):
             **order,
             "status": ORDER_STATUS["PAID"],
             "payment_status": "PAID",
-            "updated_at": datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
+            "updated_at": get_current_ist().strftime("%Y-%m-%d %H:%M:%S")
         }
         
         # Update in Redis

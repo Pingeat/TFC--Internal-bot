@@ -645,6 +645,8 @@ from config.credentials import REDIS_URL
 from utils.logger import get_logger
 from datetime import datetime, timedelta, time
 
+from utils.time_utils import get_current_ist
+
 logger = get_logger("redis_state")
 IST = ZoneInfo("Asia/Kolkata")
 class RedisState:
@@ -675,7 +677,7 @@ class RedisState:
         """Set user state in Redis"""
         try:
             # Add timestamp for debugging
-            state["last_updated"] = datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
+            state["last_updated"] = get_current_ist().strftime("%Y-%m-%d %H:%M:%S")
             self.redis.setex(f"user:{user_id}:state", 3600, json.dumps(state))  # 1 hour expiry
             logger.debug(f"Set user state for {user_id}: {state}")
             return True
@@ -867,7 +869,7 @@ class RedisState:
                     order_date = datetime.strptime(order["order_date"], "%Y-%m-%d %H:%M:%S")
             
                     # Get current datetime
-                    now = datetime.now(IST)
+                    now = get_current_ist()
             
                     # Calculate the reference date based on cutoff time
                     if now.hour < cutoff_hour:
