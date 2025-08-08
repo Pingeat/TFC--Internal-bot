@@ -20,6 +20,13 @@ STAFF_CONTACTS = {
     "ashok": "+919346647165"     # Delivery
 }
 
+# STAFF_CONTACTS = {
+#     "sochin": "+918074301029",
+#     "sagar": "+918074301029",
+#     "krishna": "+918074301029",  # Supervisor
+#     "ashok": "+918074301029"     # Delivery
+# }
+
 # STAFF_ROLES = {
 #     "+919064060132": "chef",    # Sochin
 #     "+918927830590": "chef",    # Sagar
