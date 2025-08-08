@@ -55,7 +55,7 @@ def send_morning_reminders():
 def send_kitchen_notifications():
     """Send kitchen notifications at 7:00 AM (skip on Sunday)"""
     # Skip if today is Sunday (Monday is 0, Sunday is 6)
-    if datetime.now(IST).weekday() == 6:  # Sunday
+    if get_current_ist().weekday() == 6:  # Sunday
         logger.info("Today is Sunday. Kitchen is closed. Skipping kitchen notifications.")
         return
     
@@ -85,7 +85,7 @@ def schedule_daily_tasks():
         if now.hour == 7 and now.minute == 0:
             send_kitchen_notifications()
             
-        if now.hour == 21 and now.minute == 17:
+        if now.hour == 21 and now.minute == 23:
             send_kitchen_notifications()
         
         # Sleep for 1 minute before checking again
