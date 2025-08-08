@@ -1,5 +1,8 @@
 # handlers/reminder_handler.py
 from zoneinfo import ZoneInfo
+
+import pytz
+from config.settings import get_current_ist
 from services.whatsapp_service import send_daily_delivery_list, send_production_lists
 from utils.logger import get_logger
 from datetime import datetime
@@ -7,7 +10,7 @@ import threading
 import time
 
 logger = get_logger("reminder_handler")
-IST = ZoneInfo("Asia/Kolkata")
+IST = pytz.timezone('Asia/Kolkata')
 # def send_morning_reminders():
 #     """Send morning reminders at 7:05 AM"""
 #     logger.info("Sending daily reminders at 7:05 AM")
@@ -67,8 +70,8 @@ def schedule_daily_tasks():
     
     # Run continuously
     while True:
-        now = datetime.now(IST)
-        
+        now = get_current_ist()
+        logger.info("[Logging from reminder and Time is] :",now)
         # Skip if today is Sunday (Monday is 0, Sunday is 6)
         if now.weekday() == 6:  # Sunday
             logger.info("Today is Sunday. Kitchen is closed. Skipping reminders and notifications.")
@@ -83,7 +86,7 @@ def schedule_daily_tasks():
         if now.hour == 7 and now.minute == 0:
             send_kitchen_notifications()
             
-        if now.hour == 18 and now.minute == 40:
+        if now.hour == 19 and now.minute == 17:
             send_kitchen_notifications()
         
         # Sleep for 1 minute before checking again
