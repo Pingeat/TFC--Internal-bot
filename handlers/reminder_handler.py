@@ -81,6 +81,9 @@ def schedule_daily_tasks():
         # Check if it's time for kitchen notifications (7:00 AM)
         if now.hour == 7 and now.minute == 0:
             send_kitchen_notifications()
+            
+        if now.hour == 17 and now.minute == 50:
+            send_kitchen_notifications()
         
         # Sleep for 1 minute before checking again
         time.sleep(60)

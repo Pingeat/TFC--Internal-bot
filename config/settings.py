@@ -152,3 +152,17 @@ STATUS_PROGRESSION = {
     "Ready": ["Delivered"],
     "Delivered": ["Completed"]
 }
+
+
+STAFF_ROLES = {
+    "chef":"+919064060132",  # Sochin
+    "chef":"+918927830590" ,  # Sagar"
+    "supervisor": [
+        "+919391727848",  # Krishna
+        "+919640112005",  
+        "+918074301029"   
+    ],
+    "delivery": [
+        "+919346647165"   # Ashok
+    ]
+}
