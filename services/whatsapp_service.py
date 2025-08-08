@@ -1,4 +1,5 @@
 # services/whatsapp_service.py
+import re
 import requests
 import json
 from config.credentials import META_ACCESS_TOKEN, WHATSAPP_API_URL, WHATSAPP_CATALOG_ID
@@ -364,128 +365,128 @@ def send_delivery_confirmation(to, branch, status, count):
     
     return send_text_message(to, message)
 
-def send_production_lists():
-    """Send production lists to appropriate staff based on dynamic category assignments"""
-    logger.info("Sending production lists to staff from Redis")
+# def send_production_lists():
+#     """Send production lists to appropriate staff based on dynamic category assignments"""
+#     logger.info("Sending production lists to staff from Redis")
     
-    # Get orders directly from Redis (primary source)
-    orders = redis_state.get_todays_orders()
+#     # Get orders directly from Redis (primary source)
+#     orders = redis_state.get_todays_orders()
     
-    # Group orders by category with aggregation
-    categorized_orders = {}
+#     # Group orders by category with aggregation
+#     categorized_orders = {}
     
-    # Initialize all categories
-    for category in PRODUCT_CATEGORIES.keys():
-        categorized_orders[category] = {}
+#     # Initialize all categories
+#     for category in PRODUCT_CATEGORIES.keys():
+#         categorized_orders[category] = {}
     
-    # First pass: aggregate quantities by product and branch
-    for order in orders:
-        # Parse items from order
-        try:
-            for item in order["items"]:
-                product_name = item['name'].lower()
+#     # First pass: aggregate quantities by product and branch
+#     for order in orders:
+#         # Parse items from order
+#         try:
+#             for item in order["items"]:
+#                 product_name = item['name'].lower()
                 
-                # Try to get category from catalog first (most reliable)
-                catalog_product = None
-                for pid, pinfo in PRODUCT_CATALOG.items():
-                    if pinfo["name"].lower() == product_name:
-                        catalog_product = pinfo
-                        break
+#                 # Try to get category from catalog first (most reliable)
+#                 catalog_product = None
+#                 for pid, pinfo in PRODUCT_CATALOG.items():
+#                     if pinfo["name"].lower() == product_name:
+#                         catalog_product = pinfo
+#                         break
                 
-                # Determine category
-                category = None
-                if catalog_product and "category" in catalog_product:
-                    category = catalog_product["category"]
-                else:
-                    # Fallback to keyword matching
-                    for cat, keywords in PRODUCT_CATEGORIES.items():
-                        if any(keyword in product_name for keyword in keywords):
-                            category = cat
-                            break
+#                 # Determine category
+#                 category = None
+#                 if catalog_product and "category" in catalog_product:
+#                     category = catalog_product["category"]
+#                 else:
+#                     # Fallback to keyword matching
+#                     for cat, keywords in PRODUCT_CATEGORIES.items():
+#                         if any(keyword in product_name for keyword in keywords):
+#                             category = cat
+#                             break
                 
-                # If still no category, assign to "others"
-                if not category:
-                    category = "others"
-                    logger.warning(f"Product '{item['name']}' could not be categorized, assigned to 'others'")
+#                 # If still no category, assign to "others"
+#                 if not category:
+#                     category = "others"
+#                     logger.warning(f"Product '{item['name']}' could not be categorized, assigned to 'others'")
                 
-                # Initialize product entry if not exists
-                if product_name not in categorized_orders[category]:
-                    categorized_orders[category][product_name] = {
-                        "name": item['name'],
-                        "total_quantity": 0,
-                        "by_branch": {}
-                    }
+#                 # Initialize product entry if not exists
+#                 if product_name not in categorized_orders[category]:
+#                     categorized_orders[category][product_name] = {
+#                         "name": item['name'],
+#                         "total_quantity": 0,
+#                         "by_branch": {}
+#                     }
                 
-                # Update total quantity
-                categorized_orders[category][product_name]["total_quantity"] += item['quantity']
+#                 # Update total quantity
+#                 categorized_orders[category][product_name]["total_quantity"] += item['quantity']
                 
-                # Update branch-specific quantity
-                branch = order['branch'].lower()
-                if branch not in categorized_orders[category][product_name]["by_branch"]:
-                    categorized_orders[category][product_name]["by_branch"][branch] = 0
-                categorized_orders[category][product_name]["by_branch"][branch] += item['quantity']
+#                 # Update branch-specific quantity
+#                 branch = order['branch'].lower()
+#                 if branch not in categorized_orders[category][product_name]["by_branch"]:
+#                     categorized_orders[category][product_name]["by_branch"][branch] = 0
+#                 categorized_orders[category][product_name]["by_branch"][branch] += item['quantity']
                 
-        except Exception as e:
-            logger.error(f"Error parsing order items for order {order.get('order_id')}: {str(e)}")
+#         except Exception as e:
+#             logger.error(f"Error parsing order items for order {order.get('order_id')}: {str(e)}")
     
-    # Send to appropriate staff based on category assignments
-    staff_lists = {}
+#     # Send to appropriate staff based on category assignments
+#     staff_lists = {}
     
-    # Group categories by staff member
-    for staff, assigned_categories in STAFF_ASSIGNMENTS.items():
-        # Skip delivery staff (ashok) for production lists
-        if staff == "ashok":
-            continue
+#     # Group categories by staff member
+#     for staff, assigned_categories in STAFF_ASSIGNMENTS.items():
+#         # Skip delivery staff (ashok) for production lists
+#         if staff == "ashok":
+#             continue
             
-        staff_lists[staff] = []
+#         staff_lists[staff] = []
         
-        # Add all categories assigned to this staff
-        for category in assigned_categories:
-            if category in categorized_orders and categorized_orders[category]:
-                staff_lists[staff].append({
-                    "category": category,
-                    "items": categorized_orders[category]
-                })
+#         # Add all categories assigned to this staff
+#         for category in assigned_categories:
+#             if category in categorized_orders and categorized_orders[category]:
+#                 staff_lists[staff].append({
+#                     "category": category,
+#                     "items": categorized_orders[category]
+#                 })
     
-    # Special handling for supervisor - send ALL categories
-    if "krishna" in STAFF_ASSIGNMENTS:
-        staff_lists["krishna"] = []
-        for category in categorized_orders:
-            if categorized_orders[category]:
-                staff_lists["krishna"].append({
-                    "category": category,
-                    "items": categorized_orders[category]
-                })
+#     # Special handling for supervisor - send ALL categories
+#     if "krishna" in STAFF_ASSIGNMENTS:
+#         staff_lists["krishna"] = []
+#         for category in categorized_orders:
+#             if categorized_orders[category]:
+#                 staff_lists["krishna"].append({
+#                     "category": category,
+#                     "items": categorized_orders[category]
+#                 })
     
-    # Send messages to each staff member
-    for staff, category_lists in staff_lists.items():
-        if not category_lists:
-            continue
+#     # Send messages to each staff member
+#     for staff, category_lists in staff_lists.items():
+#         if not category_lists:
+#             continue
             
-        # Build message
-        message = f"📋 *PRODUCTION LIST - {staff.title()}*\n\n"
+#         # Build message
+#         message = f"📋 *PRODUCTION LIST - {staff.title()}*\n\n"
         
-        for category_list in category_lists:
-            category = category_list["category"]
-            items = category_list["items"]
+#         for category_list in category_lists:
+#             category = category_list["category"]
+#             items = category_list["items"]
             
-            # Get display name for category
-            display_name = CATEGORY_DISPLAY_NAMES.get(category, category.title())
-            message += f"*{display_name}*\n"
+#             # Get display name for category
+#             display_name = CATEGORY_DISPLAY_NAMES.get(category, category.title())
+#             message += f"*{display_name}*\n"
             
-            for product_data in items.values():
-                # Format branch details
-                branch_details = ", ".join([f"{qty} from {branch.title()}" 
-                                          for branch, qty in product_data["by_branch"].items()])
-                message += f"• {product_data['name'].title()} x{product_data['total_quantity']} ({branch_details})\n"
+#             for product_data in items.values():
+#                 # Format branch details
+#                 branch_details = ", ".join([f"{qty} from {branch.title()}" 
+#                                           for branch, qty in product_data["by_branch"].items()])
+#                 message += f"• {product_data['name'].title()} x{product_data['total_quantity']} ({branch_details})\n"
             
-            message += "\n"
+#             message += "\n"
         
-        # Send to staff
-        if staff in STAFF_CONTACTS:
-            send_text_message(STAFF_CONTACTS[staff], message)
-        else:
-            logger.error(f"Staff {staff} not found in contacts")
+#         # Send to staff
+#         if staff in STAFF_CONTACTS:
+#             send_text_message(STAFF_CONTACTS[staff], message)
+#         else:
+#             logger.error(f"Staff {staff} not found in contacts")
 
 def send_daily_delivery_list():
     """Send delivery list to Ashok at 7:00 AM using Redis data with proper aggregation"""
@@ -551,3 +552,114 @@ def send_daily_reminder():
     
     # In a real system, you would send this to all branch managers
     # For demonstration, we're just logging it
+
+
+
+
+
+def send_production_lists():
+    """Send production lists to appropriate staff based on dynamic category assignments"""
+    logger.info("Sending production lists to staff from Redis")
+    # Get orders directly from Redis (primary source)
+    orders = redis_state.get_todays_orders()
+    
+    # Group orders by category with aggregation
+    categorized_orders = {}
+    
+    # Initialize all categories
+    for category in PRODUCT_CATEGORIES.keys():
+        categorized_orders[category] = {}
+    
+    # Sort categories by length (longest first) for more specific matching
+    sorted_categories = sorted(
+        PRODUCT_CATEGORIES.items(), 
+        key=lambda x: len(x[0]), 
+        reverse=True
+    )
+    
+    # First pass: aggregate quantities by product and branch
+    for order in orders:
+        # Parse items from order
+        try:
+            for item in order["items"]:
+                # Extract product name and quantity
+                item_name = item["name"].lower()
+                quantity = item["quantity"]
+                
+                # Find matching category - try most specific categories first
+                matched_category = None
+                for category, keywords in sorted_categories:
+                    for keyword in keywords:
+                        # Check if keyword is a whole word match
+                        if re.search(rf'\b{re.escape(keyword)}\b', item_name):
+                            matched_category = category
+                            break
+                    if matched_category:
+                        break
+                
+                # If no category matched, use "others"
+                if not matched_category:
+                    matched_category = "others"
+                
+                # Get product name without quantity details
+                product_name = item_name
+                
+                # Add to category aggregation
+                if product_name not in categorized_orders[matched_category]:
+                    categorized_orders[matched_category][product_name] = {}
+                
+                # Add quantity for this branch
+                branch = order["branch"].lower()
+                if branch not in categorized_orders[matched_category][product_name]:
+                    categorized_orders[matched_category][product_name][branch] = 0
+                
+                categorized_orders[matched_category][product_name][branch] += quantity
+        
+        except Exception as e:
+            logger.error(f"Error parsing order items for order {order['order_id']}: {str(e)}")
+            continue
+    
+    # Second pass: send lists to appropriate staff
+    for category, products in categorized_orders.items():
+        if not products:  # Skip empty categories
+            continue
+        
+        # Find staff responsible for this category
+        staff_list = []
+        for staff, categories in STAFF_ASSIGNMENTS.items():
+            if category in categories and staff in STAFF_CONTACTS:
+                staff_list.append(staff)
+        
+        if not staff_list:
+            logger.info(f"No staff assigned for category: {category}")
+            continue
+        
+        # Format message for this category
+        message = f"📋 *{CATEGORY_DISPLAY_NAMES.get(category, category).upper()} PRODUCTION LIST*\n\n"
+        
+        for product, branches in products.items():
+            message += f"*{product.title()}*\n"
+            for branch, quantity in branches.items():
+                # Fix: Use BRANCHES dictionary properly
+                branch_name = BRANCHES.get(branch, branch).title()
+                message += f"• {branch_name}: {quantity}\n"
+            message += "\n"
+        
+        # Send to all staff responsible for this category
+        for staff in staff_list:
+            send_text_message(STAFF_CONTACTS[staff], message)
+    
+    # Send delivery list to delivery staff
+    delivery_message = "🚚 *DELIVERY LIST*\n\n"
+    for order in orders:
+        if order["status"] == ORDER_STATUS["READY"]:
+            # Fix: Use BRANCHES dictionary properly
+            branch_name = BRANCHES.get(order["branch"].lower(), order["branch"]).title()
+            delivery_message += f"• #{order['order_id']} - {branch_name}\n"
+    
+    if "•" in delivery_message:  # Check if there are any delivery items
+        for staff in STAFF_ASSIGNMENTS:
+            if "delivery" in STAFF_ASSIGNMENTS[staff] and staff in STAFF_CONTACTS:
+                send_text_message(STAFF_CONTACTS[staff], delivery_message)
+    else:
+        logger.info("No orders for delivery today")
