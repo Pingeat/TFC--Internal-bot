@@ -2,7 +2,7 @@
 import requests
 import json
 from config.credentials import META_ACCESS_TOKEN, WHATSAPP_API_URL, WHATSAPP_CATALOG_ID
-from config.settings import CATEGORY_DISPLAY_NAMES, ORDER_STATUS, PRODUCT_CATALOG, PRODUCT_CATEGORIES, BRANCHES, PAYMENT_BRANCHES, STAFF_ASSIGNMENTS, STAFF_CONTACTS, PRODUCT_PRICES
+from config.settings import CATEGORY_DISPLAY_NAMES, ORDER_STATUS, PRODUCT_CATALOG, PRODUCT_CATEGORIES, BRANCHES, PAYMENT_BRANCHES, STAFF_ASSIGNMENTS, STAFF_CONTACTS, PRODUCT_PRICES, STAFF_ROLES
 from utils.logger import get_logger
 from stateHandlers.redis_state import redis_state
 from utils.payments_utils import generate_payment_link
@@ -248,30 +248,56 @@ def send_payment_link(to, order_id, amount):
     
     return send_text_message(to, message)
 
-def notify_supervisor(order_id, branch, items):
-    """Notify supervisor (Krishna) about new order with dynamic staff assignment"""
-    logger.info(f"Notifying supervisor about order {order_id} from {branch}")
+# def notify_supervisor(order_id, branch, items):
+#     """Notify supervisor (Krishna) about new order with dynamic staff assignment"""
+#     logger.info(f"Notifying supervisor about order {order_id} from {branch}")
     
-    # Double-check branch consistency
+#     # Double-check branch consistency
+#     if not branch or branch.lower() not in [b.lower() for b in BRANCHES]:
+#         logger.error(f"Invalid branch in order notification: {branch}")
+#         return
+    
+#     message = f"📋 *NEW ORDER*\n\n"
+#     message += f"Order ID: #{order_id}\n"
+#     message += f"Branch: {branch.title()}\n\n"
+#     message += "Items:\n"
+    
+#     for item in items:
+#         message += f"• {item['name'].title()} x{item['quantity']}\n"
+    
+#     # Send to all supervisors
+#     for staff in STAFF_ASSIGNMENTS:
+#         if "supervisor" in STAFF_ASSIGNMENTS[staff] and staff in STAFF_CONTACTS:
+#             logger.info(f"Sending order notification to Supervisor: {STAFF_CONTACTS[staff]}")
+#             send_text_message(STAFF_CONTACTS[staff], message)
+#     # send_production_lists()
+#     # send_daily_delivery_list()
+
+
+def notify_supervisor(order_id, branch, items):
+    """Notify ALL supervisors about new order with dynamic staff assignment"""
+    logger.info(f"Notifying supervisors about order {order_id} from {branch}")
+    
+    # Validate branch
     if not branch or branch.lower() not in [b.lower() for b in BRANCHES]:
         logger.error(f"Invalid branch in order notification: {branch}")
         return
     
-    message = f"📋 *NEW ORDER*\n\n"
-    message += f"Order ID: #{order_id}\n"
-    message += f"Branch: {branch.title()}\n\n"
-    message += "Items:\n"
-    
+    # Format order message
+    message = (
+        f"📋 *NEW ORDER*\n\n"
+        f"Order ID: #{order_id}\n"
+        f"Branch: {branch.title()}\n\n"
+        "Items:\n"
+    )
     for item in items:
         message += f"• {item['name'].title()} x{item['quantity']}\n"
     
-    # Send to all supervisors
-    for staff in STAFF_ASSIGNMENTS:
-        if "supervisor" in STAFF_ASSIGNMENTS[staff] and staff in STAFF_CONTACTS:
-            logger.info(f"Sending order notification to Supervisor: {STAFF_CONTACTS[staff]}")
-            send_text_message(STAFF_CONTACTS[staff], message)
-    # send_production_lists()
-    # send_daily_delivery_list()
+    # Send notification to ALL supervisors
+    for phone_number in STAFF_ROLES.get("supervisor", []):
+        # print(STAFF_ROLES.get("supervisor", []))
+        logger.info(f"Sending order notification to Supervisor: {phone_number}")
+        send_text_message(phone_number, message)
     
 def send_branch_delivery_instructions(to):
     """Send delivery instructions to delivery staff"""
