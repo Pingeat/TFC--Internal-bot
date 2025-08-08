@@ -9,7 +9,7 @@ import threading
 import time
 
 logger = get_logger("reminder_handler")
-IST = pytz.timezone('Asia/Kolkata')
+IST = ZoneInfo('Asia/Kolkata')
 # def send_morning_reminders():
 #     """Send morning reminders at 7:05 AM"""
 #     logger.info("Sending daily reminders at 7:05 AM")
@@ -70,7 +70,7 @@ def schedule_daily_tasks():
     # Run continuously
     while True:
         now = get_current_ist()
-        logger.info("[Logging from reminder and Time is] :",now)
+        logger.info(now)
         # Skip if today is Sunday (Monday is 0, Sunday is 6)
         if now.weekday() == 6:  # Sunday
             logger.info("Today is Sunday. Kitchen is closed. Skipping reminders and notifications.")
