@@ -82,10 +82,10 @@ def schedule_daily_tasks():
             send_morning_reminders()
         
         # Check if it's time for kitchen notifications (7:00 AM)
-        if now.hour == 7 and now.minute == 0:
-            send_kitchen_notifications()
+        # if now.hour == 7 and now.minute == 0:
+        #     send_kitchen_notifications()
             
-        if now.hour == 21 and now.minute == 52:
+        if now.hour == 7 and now.minute == 5:
             send_kitchen_notifications()
         
         # Sleep for 1 minute before checking again

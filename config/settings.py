@@ -13,19 +13,19 @@ BRANCHES = [
 PAYMENT_BRANCHES = ["madhapur", "west maredpally", "miyapur", "pragathinagar"]
 
 # Staff contacts
+# STAFF_CONTACTS = {
+#     "sochin": "+919064060132",
+#     "sagar": "+918927830590",
+#     "krishna": "+919391727848",  # Supervisor
+#     "ashok": "+919346647165"     # Delivery
+# }
+
 STAFF_CONTACTS = {
     "sochin": "+919064060132",
     "sagar": "+918927830590",
     "krishna": "+919391727848",  # Supervisor
     "ashok": "+919346647165"     # Delivery
 }
-
-# STAFF_CONTACTS = {
-#     "sochin": "+918074301029",
-#     "sagar": "+918074301029",
-#     "krishna": "+918074301029",  # Supervisor
-#     "ashok": "+918074301029"     # Delivery
-# }
 
 # STAFF_ROLES = {
 #     "+919064060132": "chef",    # Sochin
@@ -217,8 +217,8 @@ STATUS_PROGRESSION = {
 
 
 STAFF_ROLES = {
-    "chef":"+919064060132",  # Sochin
-    "chef":"+918927830590" ,  # Sagar"
+    "chef":"+918074301029",  # Sochin
+    "chef":"+919640112005" ,  # Sagar"
     "supervisor": [
         "+919391727848",  # Krishna
         "+919640112005",  

@@ -70,3 +70,24 @@ def razorpay_webhook():
             confirm_order(whatsapp_number, "Online", order_id, paid=True)
     
     return "OK", 200
+
+
+@webhook_bp.route("/download-orders")
+def download_orders():
+    from flask import send_file
+    return send_file("orders.csv", as_attachment=True)
+
+@webhook_bp.route("/download-user-log")
+def download_user_log():
+    from flask import send_file
+    return send_file("user_activity_log.csv", as_attachment=True)
+
+# @webhook_bp.route("/download-orders")
+# def download_orders():
+#     from flask import send_file
+#     return send_file("orders.csv", as_attachment=True)
+
+@webhook_bp.route("/download-offhour")
+def download_offhour_users():
+    from flask import send_file
+    return send_file("offhour_users.csv", as_attachment=True)
