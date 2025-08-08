@@ -2,7 +2,6 @@
 from zoneinfo import ZoneInfo
 
 import pytz
-from config.settings import get_current_ist
 from services.whatsapp_service import send_daily_delivery_list, send_production_lists
 from utils.logger import get_logger
 from datetime import datetime
@@ -91,3 +90,13 @@ def schedule_daily_tasks():
         
         # Sleep for 1 minute before checking again
         time.sleep(60)
+
+
+
+
+
+IST = pytz.timezone('Asia/Kolkata')
+
+def get_current_ist():
+    """Return current time in Indian Standard Time"""
+    return datetime.now(IST)

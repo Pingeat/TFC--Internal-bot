@@ -1,5 +1,9 @@
 # config/settings.py
 # Branch configuration
+from datetime import datetime
+import pytz
+
+
 BRANCHES = [
     "madhapur", "kondapur", "west maredpally", "manikonda", 
     "nanakramguda", "nizampet", "miyapur", "pragathinagar"
@@ -217,3 +221,10 @@ STAFF_ROLES = {
         "+919346647165"   # Ashok
     ]
 }
+
+
+IST = pytz.timezone('Asia/Kolkata')
+
+def get_current_ist():
+    """Return current time in Indian Standard Time"""
+    return datetime.now(IST)
