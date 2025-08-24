@@ -1,4 +1,8 @@
-const { sendTextMessage } = require('../services/whatsappService');
+const {
+  sendTextMessage,
+  sendBranchSelectionMessage,
+  sendFullCatalog,
+} = require('../services/whatsappService');
 const redisState = require('../stateHandlers/redisState');
 const logger = require('../utils/logger');
 const { BRANCHES } = require('../config/settings');
@@ -15,20 +19,50 @@ async function handleIncomingMessage(data) {
     const msg = messages[0];
     const sender = msg.from?.replace('+', '');
     const type = msg.type;
-    let state = await redisState.getUserState(sender) || { step: 'SELECT_BRANCH' };
+    let state = await redisState.getUserState(sender);
 
-    if (type === 'text') {
+    // Reset to branch selection if state missing or invalid
+    if (!state || !['SELECT_BRANCH', 'IN_CATALOG'].includes(state.step)) {
+      await redisState.clearUserState(sender);
+      await sendBranchSelectionMessage(sender);
+      await redisState.setUserState(sender, { step: 'SELECT_BRANCH' });
+      return ['Branch selection sent', 200];
+    }
+
+    if (type === 'interactive') {
+      const interactiveType = msg.interactive?.type;
+      if (interactiveType === 'list_reply') {
+        const selectedBranch = msg.interactive?.list_reply?.id;
+        if (BRANCHES.includes(selectedBranch)) {
+          await redisState.setBranch(sender, selectedBranch);
+          await redisState.setUserState(sender, {
+            step: 'IN_CATALOG',
+            branch: selectedBranch,
+          });
+          await sendFullCatalog(sender, selectedBranch);
+        } else {
+          await sendBranchSelectionMessage(sender);
+        }
+      } else {
+        logger.warn(`Unhandled interactive type: ${interactiveType}`);
+      }
+    } else if (type === 'text') {
       const text = msg.text?.body?.trim().toLowerCase();
       logger.info(`Message received from ${sender}: ${text}`);
-      if (state.step === 'SELECT_BRANCH') {
+      const greetings = ['hi', 'hello', 'hey'];
+      if (greetings.includes(text)) {
+        await sendBranchSelectionMessage(sender);
+        await redisState.setUserState(sender, { step: 'SELECT_BRANCH' });
+      } else if (state.step === 'SELECT_BRANCH') {
         if (BRANCHES.includes(text)) {
+          await redisState.setBranch(sender, text);
           await redisState.setUserState(sender, { step: 'IN_CATALOG', branch: text });
-          await sendTextMessage(sender, `✅ Selected ${text} branch. Send 'menu' to view items.`);
+          await sendFullCatalog(sender, text);
         } else {
-          await sendTextMessage(sender, `Please choose a valid branch: ${BRANCHES.join(', ')}`);
+          await sendBranchSelectionMessage(sender);
         }
-      } else if (text === 'hi' || text === 'hello') {
-        await sendTextMessage(sender, 'Hello! How can I help you today?');
+      } else if (text === 'menu') {
+        await sendFullCatalog(sender, state.branch);
       } else {
         await sendTextMessage(sender, 'Command not recognized.');
       }
