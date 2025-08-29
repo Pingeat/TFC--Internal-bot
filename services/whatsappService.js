@@ -37,6 +37,15 @@ function sendProductionLists() {
   logger.info('Sending production lists (not implemented).');
 }
 
+function sendDailyReminder() {
+  const message =
+    '⏰ *DAILY ORDER REMINDER*\n\n' +
+    'Hello! Reminder to order any raw materials required today via WhatsApp bot. ' +
+    'Cut-off: 7:00 AM tomorrow';
+  logger.info(`Daily reminder message: ${message}`);
+  // In a full implementation, this would send the message to branch managers
+}
+
 /**
  * Send a payment link message to the user.
  * @param {string} to
@@ -136,6 +145,7 @@ module.exports = {
   sendTextMessage,
   sendDailyDeliveryList,
   sendProductionLists,
+  sendDailyReminder,
   sendPaymentLink,
   sendBranchSelectionMessage,
   sendFullCatalog,
