@@ -11,11 +11,14 @@ app.use(express.json());
 // Ensure data directory exists
 fs.mkdirSync(path.join(__dirname, 'data'), { recursive: true });
 
+// Serve static UI files
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Register routes
 app.use('/webhook', webhookRouter);
 
 app.get('/', (req, res) => {
-  res.send('Central Kitchen WhatsApp Bot is running!');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start scheduler
