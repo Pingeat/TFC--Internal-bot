@@ -2,6 +2,7 @@ const {
   sendTextMessage,
   sendBranchSelectionMessage,
   sendFullCatalog,
+  sendCartSummary,
 } = require('../services/whatsappService');
 const redisState = require('../stateHandlers/redisState');
 const logger = require('../utils/logger');
@@ -65,6 +66,30 @@ async function handleIncomingMessage(data) {
         await sendFullCatalog(sender, state.branch);
       } else {
         await sendTextMessage(sender, 'Command not recognized.');
+      }
+    } else if (type === 'order') {
+      try {
+        const items = msg.order?.product_items || [];
+        if (!items.length) {
+          logger.warn(`Order message from ${sender} contained no items`);
+          await sendTextMessage(sender, '❌ No items found in your order. Please try again.');
+        } else if (!state.branch) {
+          logger.warn(`Order received from ${sender} without branch`);
+          await sendBranchSelectionMessage(sender);
+          await redisState.setUserState(sender, { step: 'SELECT_BRANCH' });
+        } else {
+          for (const item of items) {
+            const productId = item.product_retailer_id || 'unknown';
+            const quantity = parseInt(item.quantity || '1', 10);
+            const price = parseFloat(item.item_price || item.price || '0');
+            await redisState.addToCart(sender, productId, quantity, price);
+            logger.info(`Added ${quantity}x ${productId} @ ₹${price} for ${sender}`);
+          }
+          await sendCartSummary(sender);
+        }
+      } catch (err) {
+        logger.error(`Error processing order message for ${sender}: ${err.message}`);
+        await sendTextMessage(sender, '⚠️ There was an error adding items to your cart. Please try again.');
       }
     } else {
       logger.warn(`Unhandled message type: ${type}`);
