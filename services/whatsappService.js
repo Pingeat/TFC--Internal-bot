@@ -10,6 +10,7 @@ const {
 } = require('../config/settings');
 const logger = require('../utils/logger');
 const { generatePaymentLink } = require('../utils/paymentUtils');
+const redisState = require('../stateHandlers/redisState');
 
 async function sendTextMessage(to, message) {
   try {
@@ -141,6 +142,60 @@ async function sendFullCatalog(to, branch = null) {
   }
 }
 
+async function sendCartSummary(to) {
+  try {
+    logger.info(`Sending cart summary to ${to}`);
+    const cart = await redisState.getCart(to);
+    if (!cart.items.length) {
+      const message = '🛒 *YOUR CART IS EMPTY*\n\nUse the catalog to add items to your cart.';
+      return sendTextMessage(to, message);
+    }
+
+    let message = '🛒 *YOUR CART*\n\n';
+    let total = 0;
+
+    cart.items.forEach((item) => {
+      const itemTotal = item.quantity * item.price;
+      total += itemTotal;
+      message += `• ${item.name} x${item.quantity} = ₹${itemTotal}\n`;
+    });
+
+    message += `\n*TOTAL*: ₹${total}\n\n`;
+
+    await axios.post(
+      WHATSAPP_API_URL,
+      {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to,
+        type: 'interactive',
+        interactive: {
+          type: 'button',
+          body: { text: message },
+          action: {
+            buttons: [
+              {
+                type: 'reply',
+                reply: { id: 'continue_shopping', title: 'Continue Shopping' },
+              },
+              { type: 'reply', reply: { id: 'checkout', title: 'Checkout' } },
+              { type: 'reply', reply: { id: 'clear_cart', title: 'Clear Cart' } },
+            ],
+          },
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${META_ACCESS_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  } catch (err) {
+    logger.error(`Failed to send cart summary to ${to}: ${err.message}`);
+  }
+}
+
 module.exports = {
   sendTextMessage,
   sendDailyDeliveryList,
@@ -149,4 +204,5 @@ module.exports = {
   sendPaymentLink,
   sendBranchSelectionMessage,
   sendFullCatalog,
+  sendCartSummary,
 };
