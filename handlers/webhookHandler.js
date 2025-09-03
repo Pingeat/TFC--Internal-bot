@@ -53,7 +53,7 @@ router.get('/payment-success', async (req, res) => {
         `✅ Payment received for order #${orderId}. Your order is confirmed.`
       );
     } else {
-      confirmOrder(whatsappNumber, 'Online', orderId, true);
+      confirmOrder(whatsappNumber, null, [], 'Online', orderId, true);
     }
     res.status(200).send('Payment confirmed');
   } else {
@@ -87,7 +87,7 @@ router.post('/razorpay-webhook-tfcmarket', async (req, res) => {
           `✅ Payment received for order #${orderId}. Your order is confirmed.`
         );
       } else {
-        confirmOrder(whatsappNumber, 'Online', orderId, true);
+        confirmOrder(whatsappNumber, null, [], 'Online', orderId, true);
       }
     }
   }

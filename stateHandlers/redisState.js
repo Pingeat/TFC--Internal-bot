@@ -106,6 +106,43 @@ async function deletePendingOrder(orderId) {
   }
 }
 
+async function addConfirmedOrder(order) {
+  try {
+    const key = `orders:${(order.branch || 'unknown').toLowerCase()}`;
+    await redis.rpush(key, JSON.stringify(order));
+  } catch (err) {
+    logger.error(`Failed to save order ${order.order_id}: ${err.message}`);
+  }
+}
+
+async function getAllOrders() {
+  try {
+    const keys = await redis.keys('orders:*');
+    const orders = [];
+    for (const key of keys) {
+      const list = await redis.lrange(key, 0, -1);
+      list.forEach((o) => orders.push(JSON.parse(o)));
+    }
+    return orders;
+  } catch (err) {
+    logger.error(`Failed to fetch orders: ${err.message}`);
+    return [];
+  }
+}
+
+async function archiveOrders() {
+  try {
+    const keys = await redis.keys('orders:*');
+    const date = new Date().toISOString().slice(0, 10);
+    for (const key of keys) {
+      const archiveKey = key.replace('orders:', `archive:${date}:`);
+      await redis.rename(key, archiveKey);
+    }
+  } catch (err) {
+    logger.error(`Failed to archive orders: ${err.message}`);
+  }
+}
+
 module.exports = {
   getUserState,
   setUserState,
@@ -117,4 +154,7 @@ module.exports = {
   savePendingOrder,
   getPendingOrder,
   deletePendingOrder,
+  addConfirmedOrder,
+  getAllOrders,
+  archiveOrders,
 };
