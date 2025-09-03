@@ -3,10 +3,16 @@ const {
   sendBranchSelectionMessage,
   sendFullCatalog,
   sendCartSummary,
+  sendPaymentLink,
 } = require('../services/whatsappService');
 const redisState = require('../stateHandlers/redisState');
 const logger = require('../utils/logger');
-const { BRANCHES } = require('../config/settings');
+const {
+  BRANCHES,
+  PAYMENT_BRANCHES,
+  PRODUCT_CATALOG,
+} = require('../config/settings');
+const { finalizeOrder } = require('../services/orderService');
 
 async function handleIncomingMessage(data) {
   try {
@@ -43,6 +49,59 @@ async function handleIncomingMessage(data) {
           await sendFullCatalog(sender, selectedBranch);
         } else {
           await sendBranchSelectionMessage(sender);
+        }
+      } else if (interactiveType === 'button_reply') {
+        const buttonId = msg.interactive?.button_reply?.id;
+        if (buttonId === 'checkout') {
+          const cart = await redisState.getCart(sender);
+          if (!cart.items.length) {
+            await sendTextMessage(sender, '🛒 Your cart is empty.');
+          } else {
+            const total = cart.items.reduce(
+              (sum, i) => sum + i.quantity * i.price,
+              0
+            );
+            const orderId = Date.now().toString();
+            if (
+              PAYMENT_BRANCHES.map((b) => b.toLowerCase()).includes(
+                (cart.branch || '').toLowerCase()
+              )
+            ) {
+              await redisState.savePendingOrder(orderId, {
+                whatsapp: sender,
+                branch: cart.branch,
+                items: cart.items,
+              });
+              await sendPaymentLink(sender, orderId, total);
+              await sendTextMessage(
+                sender,
+                `💳 Payment required. Complete payment to confirm order #${orderId}.`
+              );
+            } else {
+              await finalizeOrder(
+                sender,
+                cart.branch,
+                cart.items,
+                'Cash',
+                orderId,
+                false
+              );
+              await sendTextMessage(
+                sender,
+                `✅ Order #${orderId} confirmed. Total: ₹${total}`
+              );
+              await redisState.clearCart(sender);
+            }
+          }
+        } else if (buttonId === 'clear_cart') {
+          await redisState.clearCart(sender);
+          await sendTextMessage(sender, '🗑️ Your cart has been cleared.');
+        } else if (buttonId === 'continue_shopping') {
+          await sendFullCatalog(sender, state.branch);
+        } else if (buttonId === 'view_cart' || buttonId === 'cart') {
+          await sendCartSummary(sender);
+        } else {
+          logger.warn(`Unhandled button id: ${buttonId}`);
         }
       } else {
         logger.warn(`Unhandled interactive type: ${interactiveType}`);
@@ -81,9 +140,13 @@ async function handleIncomingMessage(data) {
           for (const item of items) {
             const productId = item.product_retailer_id || 'unknown';
             const quantity = parseInt(item.quantity || '1', 10);
-            const price = parseFloat(item.item_price || item.price || '0');
-            await redisState.addToCart(sender, productId, quantity, price);
-            logger.info(`Added ${quantity}x ${productId} @ ₹${price} for ${sender}`);
+            const productInfo = PRODUCT_CATALOG[productId];
+            const name = productInfo ? productInfo.name : productId;
+            const price = productInfo
+              ? productInfo.price
+              : parseFloat(item.item_price || item.price || '0');
+            await redisState.addToCart(sender, name, quantity, price);
+            logger.info(`Added ${quantity}x ${name} @ ₹${price} for ${sender}`);
           }
           await sendCartSummary(sender);
         }
