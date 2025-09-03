@@ -344,6 +344,34 @@ async function sendCartSummary(to) {
   }
 }
 
+// Delivery status helpers
+async function sendBranchDeliveryInstructions(to) {
+  let message = '🚚 *DELIVERY COMMANDS*\n\n';
+  message += '• ready [branch] - mark branch orders as READY\n';
+  message += '• on the way [branch] - mark branch orders as ON THE WAY\n';
+  message += '• delivered [branch] - archive branch orders as DELIVERED\n\n';
+  message += 'Use /status to view current delivery status.';
+  return sendTextMessage(to, message);
+}
+
+async function sendDeliveryStatus(to) {
+  const statuses = await redisState.getDeliveryStatuses();
+  let message = '📦 *CURRENT DELIVERY STATUS*\n\n';
+  if (Object.keys(statuses).length === 0) {
+    message += 'No branches have pending deliveries.';
+  } else {
+    Object.keys(statuses).forEach((branch) => {
+      message += `• ${toTitleCase(branch)}: ${toTitleCase(statuses[branch])}\n`;
+    });
+  }
+  return sendTextMessage(to, message);
+}
+
+async function sendDeliveryConfirmation(to, branch, status) {
+  const message = `✅ ${toTitleCase(status)} - ${toTitleCase(branch)}`;
+  return sendTextMessage(to, message);
+}
+
 module.exports = {
   sendTextMessage,
   sendDailyDeliveryList,
@@ -353,4 +381,7 @@ module.exports = {
   sendBranchSelectionMessage,
   sendFullCatalog,
   sendCartSummary,
+  sendBranchDeliveryInstructions,
+  sendDeliveryStatus,
+  sendDeliveryConfirmation,
 };
