@@ -32,37 +32,43 @@ async function handleIncomingMessage(data) {
     const type = msg.type;
     const isDeliveryStaff = DELIVERY_CONTACTS.map((n) => n.replace('+', '')).includes(sender);
 
-    if (isDeliveryStaff && type === 'text') {
-      const text = msg.text?.body?.trim().toLowerCase();
-      if (text === '/status' || text === '/list') {
-        await sendDeliveryStatus(sender);
-      } else if (text === '/help') {
-        await sendBranchDeliveryInstructions(sender);
-      } else {
-        const match = text.match(/^(ready|delivered|on\s*the\s*way|on-the-way|ontheway|onway)\s+(.+)$/);
-        if (match) {
-          let status = match[1];
-          const branchText = match[2].trim();
-          if (status.startsWith('on')) status = 'on the way';
-          const branch = BRANCHES.find(
-            (b) => b.toLowerCase() === branchText.toLowerCase()
-          );
-          if (branch) {
-            if (status === 'delivered') {
-              await redisState.markBranchDelivered(branch);
-            } else {
-              await redisState.setBranchDeliveryStatus(branch, status);
-            }
-            await sendDeliveryConfirmation(sender, branch, status);
-          } else {
-            await sendTextMessage(sender, 'Unknown branch. Use /help for commands.');
-          }
-        } else {
+      if (isDeliveryStaff && type === 'text') {
+        const text = msg.text?.body?.trim().toLowerCase();
+        if (text === '/status' || text === '/list') {
+          await sendDeliveryStatus(sender);
+          return ['Delivery message processed', 200];
+        } else if (text === '/help') {
           await sendBranchDeliveryInstructions(sender);
+          return ['Delivery message processed', 200];
+        } else {
+          const match = text.match(
+            /^(ready|delivered|on\s*the\s*way|on-the-way|ontheway|onway)\s+(.+)$/
+          );
+          if (match) {
+            let status = match[1];
+            const branchText = match[2].trim();
+            if (status.startsWith('on')) status = 'on the way';
+            const branch = BRANCHES.find(
+              (b) => b.toLowerCase() === branchText.toLowerCase()
+            );
+            if (branch) {
+              if (status === 'delivered') {
+                await redisState.markBranchDelivered(branch);
+              } else {
+                await redisState.setBranchDeliveryStatus(branch, status);
+              }
+              await sendDeliveryConfirmation(sender, branch, status);
+            } else {
+              await sendTextMessage(
+                sender,
+                'Unknown branch. Use /help for commands.'
+              );
+            }
+            return ['Delivery message processed', 200];
+          }
         }
+        // If the delivery staff sends a non-command message, treat as regular user
       }
-      return ['Delivery message processed', 200];
-    }
 
     let state = await redisState.getUserState(sender);
 
