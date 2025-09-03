@@ -356,12 +356,14 @@ async function sendBranchDeliveryInstructions(to) {
 
 async function sendDeliveryStatus(to) {
   const statuses = await redisState.getDeliveryStatuses();
+  const branches = await redisState.getBranchesWithOrders();
   let message = '📦 *CURRENT DELIVERY STATUS*\n\n';
-  if (Object.keys(statuses).length === 0) {
+  if (!branches.length) {
     message += 'No branches have pending deliveries.';
   } else {
-    Object.keys(statuses).forEach((branch) => {
-      message += `• ${toTitleCase(branch)}: ${toTitleCase(statuses[branch])}\n`;
+    branches.forEach((branch) => {
+      const status = statuses[branch] || 'pending';
+      message += `• ${toTitleCase(branch)}: ${toTitleCase(status)}\n`;
     });
   }
   return sendTextMessage(to, message);

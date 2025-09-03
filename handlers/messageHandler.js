@@ -52,12 +52,20 @@ async function handleIncomingMessage(data) {
               (b) => b.toLowerCase() === branchText.toLowerCase()
             );
             if (branch) {
-              if (status === 'delivered') {
-                await redisState.markBranchDelivered(branch);
+              const hasOrders = await redisState.branchHasOrders(branch);
+              if (!hasOrders) {
+                await sendTextMessage(
+                  sender,
+                  `No active orders for ${branch}.`
+                );
               } else {
-                await redisState.setBranchDeliveryStatus(branch, status);
+                if (status === 'delivered') {
+                  await redisState.markBranchDelivered(branch);
+                } else {
+                  await redisState.setBranchDeliveryStatus(branch, status);
+                }
+                await sendDeliveryConfirmation(sender, branch, status);
               }
-              await sendDeliveryConfirmation(sender, branch, status);
             } else {
               await sendTextMessage(
                 sender,

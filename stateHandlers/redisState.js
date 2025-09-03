@@ -115,6 +115,33 @@ async function addConfirmedOrder(order) {
   }
 }
 
+async function branchHasOrders(branch) {
+  try {
+    const count = await redis.llen(`orders:${branch.toLowerCase()}`);
+    return count > 0;
+  } catch (err) {
+    logger.error(`Failed to check orders for ${branch}: ${err.message}`);
+    return false;
+  }
+}
+
+async function getBranchesWithOrders() {
+  try {
+    const keys = await redis.keys('orders:*');
+    const branches = [];
+    for (const key of keys) {
+      const count = await redis.llen(key);
+      if (count > 0) {
+        branches.push(key.split(':')[1]);
+      }
+    }
+    return branches;
+  } catch (err) {
+    logger.error(`Failed to fetch branches with orders: ${err.message}`);
+    return [];
+  }
+}
+
 async function getAllOrders() {
   try {
     const keys = await redis.keys('orders:*');
@@ -197,6 +224,8 @@ module.exports = {
   getPendingOrder,
   deletePendingOrder,
   addConfirmedOrder,
+  branchHasOrders,
+  getBranchesWithOrders,
   getAllOrders,
   archiveOrders,
   setBranchDeliveryStatus,
