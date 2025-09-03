@@ -35,13 +35,13 @@ const ORDER_STATUS = {
 // Contact numbers grouped by roles
 const CHEF_CONTACTS = {
   // Custard chef(s)
-  custard: ['+919064060132'],
+  custard: ['+919064060132', '+919640112005', '+918074301029'],
   // Delight chef(s)
-  delight: ['+918927830590']
+  delight: ['+918927830590', '+919640112005','+918074301029']
 };
 
 // Delivery staff who should receive delivery lists
-const DELIVERY_CONTACTS = ['+919346647165'];
+const DELIVERY_CONTACTS = ['+919346647165','+919640112005','+918074301029'];
 
 module.exports = {
   BRANCHES,
