@@ -205,8 +205,8 @@ async function markBranchDelivered(branch) {
       ? { ...JSON.parse(existing), status: 'delivered', updated_at: Date.now() }
       : { status: 'delivered', updated_at: Date.now() };
     const archiveKey = `delivery_archive:${branch.toLowerCase()}:${Date.now()}`;
+    await redis.set(key, JSON.stringify(payload));
     await redis.set(archiveKey, JSON.stringify(payload), 'EX', 3 * 24 * 60 * 60);
-    await redis.del(key);
   } catch (err) {
     logger.error(`Failed to archive delivery status for ${branch}: ${err.message}`);
   }

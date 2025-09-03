@@ -368,9 +368,9 @@ async function sendDeliveryStatus(to) {
       const ready = status === 'ready' ? 1 : 0;
       const delivered = status === 'delivered' ? 1 : 0;
       message += `${toTitleCase(branch)}:\n`;
-      message += `orders: ${orders}(if orders are placed multiple times before next day 7am all orders needs to be delivered next day)\n`;
+      message += `Orders: ${orders}\n`;
       message += `Ready: ${ready}\n`;
-      message += `delivered: ${delivered}\n`;
+      message += `Delivered: ${delivered}\n`;
       message += delivered > 0 ? 'all orders delivered for the day for this branch\n' : 'orders not yet delivered.\n';
       message += '\n';
     });
