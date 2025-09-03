@@ -143,6 +143,48 @@ async function archiveOrders() {
   }
 }
 
+// Delivery status helpers
+async function setBranchDeliveryStatus(branch, status) {
+  try {
+    const key = `delivery:${branch.toLowerCase()}`;
+    const data = { status: status.toLowerCase(), updated_at: Date.now() };
+    await redis.set(key, JSON.stringify(data));
+  } catch (err) {
+    logger.error(`Failed to set delivery status for ${branch}: ${err.message}`);
+  }
+}
+
+async function markBranchDelivered(branch) {
+  try {
+    const key = `delivery:${branch.toLowerCase()}`;
+    const existing = await redis.get(key);
+    const payload = existing
+      ? { ...JSON.parse(existing), status: 'delivered', updated_at: Date.now() }
+      : { status: 'delivered', updated_at: Date.now() };
+    const archiveKey = `delivery_archive:${branch.toLowerCase()}:${Date.now()}`;
+    await redis.set(archiveKey, JSON.stringify(payload), 'EX', 3 * 24 * 60 * 60);
+    await redis.del(key);
+  } catch (err) {
+    logger.error(`Failed to archive delivery status for ${branch}: ${err.message}`);
+  }
+}
+
+async function getDeliveryStatuses() {
+  try {
+    const keys = await redis.keys('delivery:*');
+    const result = {};
+    for (const key of keys) {
+      const branch = key.split(':')[1];
+      const data = await redis.get(key);
+      result[branch] = data ? JSON.parse(data).status : null;
+    }
+    return result;
+  } catch (err) {
+    logger.error(`Failed to fetch delivery statuses: ${err.message}`);
+    return {};
+  }
+}
+
 module.exports = {
   getUserState,
   setUserState,
@@ -157,4 +199,7 @@ module.exports = {
   addConfirmedOrder,
   getAllOrders,
   archiveOrders,
+  setBranchDeliveryStatus,
+  markBranchDelivered,
+  getDeliveryStatuses,
 };
