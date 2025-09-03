@@ -7,7 +7,6 @@ const {
 const {
   BRANCHES,
   PAYMENT_BRANCHES,
-  ORDERS_CSV,
   SUPERVISORS,
   CHEF_CONTACTS,
   DELIVERY_CONTACTS,
@@ -15,7 +14,6 @@ const {
 const logger = require('../utils/logger');
 const { generatePaymentLink } = require('../utils/paymentUtils');
 const redisState = require('../stateHandlers/redisState');
-const { readCsv } = require('../utils/csvUtils');
 
 async function sendTextMessage(to, message) {
   try {
@@ -39,15 +37,16 @@ function toTitleCase(str) {
   return str.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function parseItems(itemsStr) {
-  if (!itemsStr) return [];
+function parseItems(itemsInput) {
+  if (!itemsInput) return [];
+  if (Array.isArray(itemsInput)) return itemsInput;
   try {
-    const parsed = JSON.parse(itemsStr);
+    const parsed = JSON.parse(itemsInput);
     if (Array.isArray(parsed)) return parsed;
   } catch (e) {
     // fall back to semi-colon separated format "Item xQty"
   }
-  return itemsStr
+  return itemsInput
     .split(/;|\n/)
     .map((part) => {
       const match = part.trim().match(/(.+?)\s*x\s*(\d+)/i);
@@ -77,11 +76,11 @@ function aggregateOrders(orders) {
   const branchTotals = {};
 
   orders.forEach((order) => {
-    const branch = (order.Branch || '').toLowerCase();
+    const branch = (order.branch || '').toLowerCase();
     if (!branch) return;
     if (!branchTotals[branch]) branchTotals[branch] = {};
 
-    const items = parseItems(order.Items);
+    const items = parseItems(order.items);
     items.forEach((item) => {
       const name = item.name || '';
       const qty = parseInt(item.quantity, 10) || 0;
@@ -104,7 +103,7 @@ function aggregateOrders(orders) {
 // Send daily delivery list to delivery staff
 async function sendDailyDeliveryList() {
   try {
-    const orders = readCsv(ORDERS_CSV);
+    const orders = await redisState.getAllOrders();
     if (!orders.length) {
       logger.info('No orders for delivery today');
       return;
@@ -125,6 +124,8 @@ async function sendDailyDeliveryList() {
       // eslint-disable-next-line no-await-in-loop
       await sendTextMessage(to, message);
     }
+
+    await redisState.archiveOrders();
   } catch (err) {
     logger.error(`Failed to send delivery list: ${err.message}`);
   }
@@ -133,7 +134,7 @@ async function sendDailyDeliveryList() {
 // Send production lists to chefs and supervisors
 async function sendProductionLists() {
   try {
-    const orders = readCsv(ORDERS_CSV);
+    const orders = await redisState.getAllOrders();
     if (!orders.length) {
       logger.info('No orders for production today');
       return;
