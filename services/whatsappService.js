@@ -7,10 +7,15 @@ const {
 const {
   BRANCHES,
   PAYMENT_BRANCHES,
+  ORDERS_CSV,
+  SUPERVISORS,
+  CHEF_CONTACTS,
+  DELIVERY_CONTACTS,
 } = require('../config/settings');
 const logger = require('../utils/logger');
 const { generatePaymentLink } = require('../utils/paymentUtils');
 const redisState = require('../stateHandlers/redisState');
+const { readCsv } = require('../utils/csvUtils');
 
 async function sendTextMessage(to, message) {
   try {
@@ -29,13 +34,155 @@ async function sendTextMessage(to, message) {
   }
 }
 
-// Placeholder functions to mirror Python structure
-function sendDailyDeliveryList() {
-  logger.info('Sending daily delivery list (not implemented).');
+// Utility helpers
+function toTitleCase(str) {
+  return str.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function sendProductionLists() {
-  logger.info('Sending production lists (not implemented).');
+function parseItems(itemsStr) {
+  if (!itemsStr) return [];
+  try {
+    const parsed = JSON.parse(itemsStr);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (e) {
+    // fall back to semi-colon separated format "Item xQty"
+  }
+  return itemsStr
+    .split(/;|\n/)
+    .map((part) => {
+      const match = part.trim().match(/(.+?)\s*x\s*(\d+)/i);
+      if (match) {
+        return { name: match[1].trim(), quantity: parseInt(match[2], 10) };
+      }
+      return null;
+    })
+    .filter(Boolean);
+}
+
+function categorizeProduct(name) {
+  const lower = name.toLowerCase();
+  if (lower.includes('mango custard')) return 'mango custard';
+  if (lower.includes('less sugar')) return 'less sugar custards';
+  if (lower.includes('oatmeal')) return 'oatmeal';
+  if (lower.includes('custard')) return 'custard';
+  if (lower.includes('apricot')) return 'apricot delight';
+  if (lower.includes('strawberry')) return 'strawberry delight';
+  if (lower.includes('blueberry')) return 'blueberry delight';
+  if (lower.includes('delight')) return 'delights';
+  return null;
+}
+
+function aggregateOrders(orders) {
+  const categoryTotals = {};
+  const branchTotals = {};
+
+  orders.forEach((order) => {
+    const branch = (order.Branch || '').toLowerCase();
+    if (!branch) return;
+    if (!branchTotals[branch]) branchTotals[branch] = {};
+
+    const items = parseItems(order.Items);
+    items.forEach((item) => {
+      const name = item.name || '';
+      const qty = parseInt(item.quantity, 10) || 0;
+      const lowerName = name.toLowerCase();
+
+      if (!branchTotals[branch][lowerName]) branchTotals[branch][lowerName] = 0;
+      branchTotals[branch][lowerName] += qty;
+
+      const category = categorizeProduct(lowerName);
+      if (category) {
+        if (!categoryTotals[category]) categoryTotals[category] = 0;
+        categoryTotals[category] += qty;
+      }
+    });
+  });
+
+  return { categoryTotals, branchTotals };
+}
+
+// Send daily delivery list to delivery staff
+async function sendDailyDeliveryList() {
+  try {
+    const orders = readCsv(ORDERS_CSV);
+    if (!orders.length) {
+      logger.info('No orders for delivery today');
+      return;
+    }
+    const { branchTotals } = aggregateOrders(orders);
+
+    let message = '🚚 *DAILY DELIVERY LIST*\n\n';
+    Object.keys(branchTotals).forEach((branch) => {
+      message += `*${toTitleCase(branch)}*\n`;
+      const products = branchTotals[branch];
+      Object.keys(products).forEach((product) => {
+        message += `• ${toTitleCase(product)} x${products[product]}\n`;
+      });
+      message += '\n';
+    });
+
+    for (const to of DELIVERY_CONTACTS) {
+      // eslint-disable-next-line no-await-in-loop
+      await sendTextMessage(to, message);
+    }
+  } catch (err) {
+    logger.error(`Failed to send delivery list: ${err.message}`);
+  }
+}
+
+// Send production lists to chefs and supervisors
+async function sendProductionLists() {
+  try {
+    const orders = readCsv(ORDERS_CSV);
+    if (!orders.length) {
+      logger.info('No orders for production today');
+      return;
+    }
+
+    const { categoryTotals, branchTotals } = aggregateOrders(orders);
+
+    const chefCategories = {
+      custard: ['custard', 'oatmeal', 'mango custard', 'less sugar custards'],
+      delight: ['delights', 'apricot delight', 'strawberry delight', 'blueberry delight'],
+    };
+
+    // Send category totals to each chef group
+    for (const chef of Object.keys(CHEF_CONTACTS)) {
+      const contacts = CHEF_CONTACTS[chef];
+      const categories = chefCategories[chef] || [];
+      let message = '📋 *PRODUCTION LIST*\n\n';
+      categories.forEach((cat) => {
+        const count = categoryTotals[cat] || 0;
+        if (count) {
+          message += `• ${toTitleCase(cat)} x${count}\n`;
+        }
+      });
+      if (message.trim() === '📋 *PRODUCTION LIST*') continue; // nothing to send
+
+      for (const to of contacts) {
+        // eslint-disable-next-line no-await-in-loop
+        await sendTextMessage(to, message);
+      }
+    }
+
+    // Build consolidated branch-wise summary for supervisors
+    let supMessage = '📊 *CONSOLIDATED PRODUCTION LIST*\n\n';
+    Object.keys(branchTotals).forEach((branch) => {
+      supMessage += `*${toTitleCase(branch)}*\n`;
+      const products = branchTotals[branch];
+      Object.keys(products).forEach((product) => {
+        supMessage += `• ${toTitleCase(product)} x${products[product]}\n`;
+      });
+      supMessage += '\n';
+    });
+
+    for (const to of SUPERVISORS) {
+      // eslint-disable-next-line no-await-in-loop
+      await sendTextMessage(to, supMessage);
+    }
+  } catch (err) {
+    logger.error(`Failed to send production lists: ${err.message}`);
+  }
 }
 
 function sendDailyReminder() {

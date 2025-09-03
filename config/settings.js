@@ -15,7 +15,8 @@ const SUPERVISORS = [
 
 const SCHEDULED_MESSAGES_CSV = 'data/scheduled_messages.csv';
 
-const ORDERS_CSV = 'data/orders.csv';
+// Location of the orders log used for generating production and delivery lists
+const ORDERS_CSV = 'orders.csv';
 const FEEDBACK_CSV = 'data/feedback.csv';
 const USER_LOG_CSV = 'data/user_activity_log.csv';
 const OFF_HOUR_USERS_CSV = 'data/offhour_users.csv';
@@ -31,6 +32,17 @@ const ORDER_STATUS = {
   COMPLETED: 'Completed'
 };
 
+// Contact numbers grouped by roles
+const CHEF_CONTACTS = {
+  // Custard chef(s)
+  custard: ['+919064060132'],
+  // Delight chef(s)
+  delight: ['+918927830590']
+};
+
+// Delivery staff who should receive delivery lists
+const DELIVERY_CONTACTS = ['+919346647165'];
+
 module.exports = {
   BRANCHES,
   PAYMENT_BRANCHES,
@@ -43,5 +55,7 @@ module.exports = {
   SUPERVISORS,
   SCHEDULED_MESSAGES_CSV,
   CUT_OFF_HOUR,
-  ORDER_STATUS
+  ORDER_STATUS,
+  CHEF_CONTACTS,
+  DELIVERY_CONTACTS
 };
