@@ -357,16 +357,25 @@ async function sendBranchDeliveryInstructions(to) {
 async function sendDeliveryStatus(to) {
   const statuses = await redisState.getDeliveryStatuses();
   const branches = await redisState.getBranchesWithOrders();
+  const counts = await redisState.getBranchOrderCounts();
   let message = '📦 *CURRENT DELIVERY STATUS*\n\n';
   if (!branches.length) {
     message += 'No branches have pending deliveries.';
   } else {
     branches.forEach((branch) => {
       const status = statuses[branch] || 'pending';
-      message += `• ${toTitleCase(branch)}: ${toTitleCase(status)}\n`;
+      const orders = counts[branch] || 0;
+      const ready = status === 'ready' ? 1 : 0;
+      const delivered = status === 'delivered' ? 1 : 0;
+      message += `${toTitleCase(branch)}:\n`;
+      message += `orders: ${orders}(if orders are placed multiple times before next day 7am all orders needs to be delivered next day)\n`;
+      message += `Ready: ${ready}\n`;
+      message += `delivered: ${delivered}\n`;
+      message += delivered > 0 ? 'all orders delivered for the day for this branch\n' : 'orders not yet delivered.\n';
+      message += '\n';
     });
   }
-  return sendTextMessage(to, message);
+  return sendTextMessage(to, message.trim());
 }
 
 async function sendDeliveryConfirmation(to, branch, status) {
