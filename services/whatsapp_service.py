@@ -319,10 +319,14 @@ def send_branch_delivery_instructions(to):
 def send_delivery_status(to):
     """Send current delivery status for all branches"""
     logger.info(f"Sending delivery status to {to}")
-    
+
     # Get all orders
     orders = redis_state.get_todays_orders()
-    
+
+    if not orders:
+        message = "📦 CURRENT DELIVERY STATUS\n\nNo orders found."
+        return send_text_message(to, message)
+
     # Group by branch and status
     branch_status = {}
     for order in orders:
@@ -331,27 +335,32 @@ def send_delivery_status(to):
             branch_status[branch] = {
                 "ready": 0,
                 "delivered": 0,
-                "total": 0
+                "total": 0,
             }
-        
+
         branch_status[branch]["total"] += 1
         if order["status"] == ORDER_STATUS["READY"]:
             branch_status[branch]["ready"] += 1
         elif order["status"] == ORDER_STATUS["DELIVERED"]:
             branch_status[branch]["delivered"] += 1
-    
+
     # Create status message
-    message = "📊 *CURRENT DELIVERY STATUS*\n\n"
+    message = "📦 CURRENT DELIVERY STATUS\n\n"
     for branch, status in branch_status.items():
         branch_name = next((b for b in BRANCHES if b.lower() == branch), branch)
-        message += f"*{branch_name.title()}*\n"
-        message += f"• Total Orders: {status['total']}\n"
-        message += f"• Ready for Delivery: {status['ready']}\n"
-        message += f"• Delivered: {status['delivered']}\n\n"
-    
-    message += "Use delivery commands to update status."
-    
-    return send_text_message(to, message)
+        message += f"{branch_name.title()}:\n"
+        message += (
+            f"orders: {status['total']}"
+            " (if orders are placed multiple times before next day 7am all orders needs to be delivered next day)\n"
+        )
+        message += f"Ready: {status['ready']}\n"
+        message += f"delivered: {status['delivered']}\n"
+        if status['delivered'] >= status['total'] and status['total'] > 0:
+            message += "all orders delivered for the day for this branch\n\n"
+        else:
+            message += "orders not yet delivered.\n\n"
+
+    return send_text_message(to, message.strip())
 
 def send_delivery_confirmation(to, branch, status, count):
     """Send delivery confirmation message"""
