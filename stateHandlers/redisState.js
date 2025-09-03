@@ -59,6 +59,17 @@ async function addToCart(phone, name, quantity, price) {
   }
 }
 
+async function clearCart(phone) {
+  try {
+    await redis.del(`cart:${phone}`);
+    logger.info(`Cleared cart for ${phone}`);
+    return true;
+  } catch (err) {
+    logger.error(`Failed to clear cart for ${phone}: ${err.message}`);
+    return false;
+  }
+}
+
 async function setBranch(phone, branch) {
   try {
     const cart = await getCart(phone);
@@ -69,11 +80,41 @@ async function setBranch(phone, branch) {
   }
 }
 
+async function savePendingOrder(orderId, data) {
+  try {
+    await redis.set(`pending:${orderId}`, JSON.stringify(data), 'EX', 24 * 60 * 60);
+  } catch (err) {
+    logger.error(`Failed to save pending order ${orderId}: ${err.message}`);
+  }
+}
+
+async function getPendingOrder(orderId) {
+  try {
+    const data = await redis.get(`pending:${orderId}`);
+    return data ? JSON.parse(data) : null;
+  } catch (err) {
+    logger.error(`Failed to get pending order ${orderId}: ${err.message}`);
+    return null;
+  }
+}
+
+async function deletePendingOrder(orderId) {
+  try {
+    await redis.del(`pending:${orderId}`);
+  } catch (err) {
+    logger.error(`Failed to delete pending order ${orderId}: ${err.message}`);
+  }
+}
+
 module.exports = {
   getUserState,
   setUserState,
   clearUserState,
   getCart,
   addToCart,
+  clearCart,
   setBranch,
+  savePendingOrder,
+  getPendingOrder,
+  deletePendingOrder,
 };

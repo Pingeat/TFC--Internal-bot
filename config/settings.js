@@ -5,6 +5,16 @@ const BRANCHES = [
 
 const PAYMENT_BRANCHES = ['madhapur', 'west maredpally', 'miyapur', 'pragathinagar'];
 
+const PRODUCT_CATALOG = require('./productCatalog.json');
+
+const SUPERVISORS = [
+  '+919391727848',
+  '+919640112005',
+  '+918074301029',
+];
+
+const SCHEDULED_MESSAGES_CSV = 'data/scheduled_messages.csv';
+
 const ORDERS_CSV = 'data/orders.csv';
 const FEEDBACK_CSV = 'data/feedback.csv';
 const USER_LOG_CSV = 'data/user_activity_log.csv';
@@ -29,6 +39,9 @@ module.exports = {
   USER_LOG_CSV,
   OFF_HOUR_USERS_CSV,
   PROMO_LOG_CSV,
+  PRODUCT_CATALOG,
+  SUPERVISORS,
+  SCHEDULED_MESSAGES_CSV,
   CUT_OFF_HOUR,
   ORDER_STATUS
 };

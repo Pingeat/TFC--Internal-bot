@@ -1,7 +1,9 @@
 const express = require('express');
 const path = require('path');
 const { handleIncomingMessage } = require('./messageHandler');
-const { confirmOrder } = require('../services/orderService');
+const { confirmOrder, finalizeOrder } = require('../services/orderService');
+const redisState = require('../stateHandlers/redisState');
+const { sendTextMessage } = require('../services/whatsappService');
 const { META_VERIFY_TOKEN } = require('../config/credentials');
 const logger = require('../utils/logger');
 
@@ -29,12 +31,30 @@ router.get('/', (req, res) => {
   }
 });
 
-router.get('/payment-success', (req, res) => {
+router.get('/payment-success', async (req, res) => {
   logger.info('Payment success callback received.');
   const whatsappNumber = req.query.whatsapp;
   const orderId = req.query.order_id;
   if (whatsappNumber && orderId) {
-    confirmOrder(whatsappNumber, 'Online', orderId, true);
+    const pending = await redisState.getPendingOrder(orderId);
+    if (pending) {
+      await finalizeOrder(
+        whatsappNumber,
+        pending.branch,
+        pending.items,
+        'Online',
+        orderId,
+        true
+      );
+      await redisState.deletePendingOrder(orderId);
+      await redisState.clearCart(whatsappNumber);
+      await sendTextMessage(
+        whatsappNumber,
+        `✅ Payment received for order #${orderId}. Your order is confirmed.`
+      );
+    } else {
+      confirmOrder(whatsappNumber, 'Online', orderId, true);
+    }
     res.status(200).send('Payment confirmed');
   } else {
     logger.error('Missing parameters in payment success callback');
@@ -42,7 +62,7 @@ router.get('/payment-success', (req, res) => {
   }
 });
 
-router.post('/razorpay-webhook-tfcmarket', (req, res) => {
+router.post('/razorpay-webhook-tfcmarket', async (req, res) => {
   logger.info('Razorpay webhook received.');
   const data = req.body;
   if (data.event === 'payment_link.paid') {
@@ -50,7 +70,25 @@ router.post('/razorpay-webhook-tfcmarket', (req, res) => {
     const whatsappNumber = paymentData.customer?.contact;
     const orderId = paymentData.reference_id;
     if (whatsappNumber && orderId) {
-      confirmOrder(whatsappNumber, 'Online', orderId, true);
+      const pending = await redisState.getPendingOrder(orderId);
+      if (pending) {
+        await finalizeOrder(
+          whatsappNumber,
+          pending.branch,
+          pending.items,
+          'Online',
+          orderId,
+          true
+        );
+        await redisState.deletePendingOrder(orderId);
+        await redisState.clearCart(whatsappNumber);
+        await sendTextMessage(
+          whatsappNumber,
+          `✅ Payment received for order #${orderId}. Your order is confirmed.`
+        );
+      } else {
+        confirmOrder(whatsappNumber, 'Online', orderId, true);
+      }
     }
   }
   res.status(200).send('OK');
