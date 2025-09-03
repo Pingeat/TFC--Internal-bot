@@ -86,9 +86,14 @@ async function handleIncomingMessage(data) {
                 orderId,
                 false
               );
+              const itemLines = cart.items
+                .map(
+                  (i) => `• ${i.name} x${i.quantity} - ₹${i.price * i.quantity}`
+                )
+                .join('\n');
               await sendTextMessage(
                 sender,
-                `✅ Order #${orderId} confirmed. Total: ₹${total}`
+                `✅ Order #${orderId} confirmed\nBranch: ${cart.branch}\n\nItems:\n${itemLines}\n\nTotal: ₹${total}`
               );
               await redisState.clearCart(sender);
             }

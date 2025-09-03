@@ -26,8 +26,11 @@ function scheduleSupervisorReminders(orderId, branch, items) {
   sendAt.setDate(sendAt.getDate() + 1);
   sendAt.setHours(7, 0, 0, 0);
   const sendAtStr = formatISTDateTime(sendAt);
-  const itemLines = items.map((i) => `${i.name} x${i.quantity}`).join(', ');
-  const message = `Reminder: Order #${orderId} from ${branch}: ${itemLines}`;
+  const itemLines = items
+    .map((i) => `• ${i.name} x${i.quantity} - ₹${i.price * i.quantity}`)
+    .join('\n');
+  const total = items.reduce((sum, i) => sum + i.quantity * i.price, 0);
+  const message = `Reminder: Order #${orderId}\nBranch: ${branch}\n\nItems:\n${itemLines}\n\nTotal: ₹${total}`;
   SUPERVISORS.forEach((sup) => {
     appendToCsv(SCHEDULED_MESSAGES_CSV, {
       send_at: sendAtStr,
@@ -38,11 +41,14 @@ function scheduleSupervisorReminders(orderId, branch, items) {
 }
 
 async function notifySupervisors(orderId, branch, items) {
-  const itemLines = items.map((i) => `${i.name} x${i.quantity}`).join(', ');
+  const itemLines = items
+    .map((i) => `• ${i.name} x${i.quantity} - ₹${i.price * i.quantity}`)
+    .join('\n');
+  const total = items.reduce((sum, i) => sum + i.quantity * i.price, 0);
   for (const sup of SUPERVISORS) {
     await sendTextMessage(
       sup,
-      `🆕 Order #${orderId} from ${branch}: ${itemLines}`
+      `🆕 Order #${orderId}\nBranch: ${branch}\n\nItems:\n${itemLines}\n\nTotal: ₹${total}`
     );
   }
   scheduleSupervisorReminders(orderId, branch, items);
